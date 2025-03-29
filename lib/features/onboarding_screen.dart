@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:helpper/core/constants/color_constants.dart';
 import 'package:helpper/core/widgets/custom_button.dart';
 import 'package:helpper/routes/app_routes.dart';
-import 'package:helpper/core/constants/color_constants.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({Key? key}) : super(key: key);
@@ -150,7 +149,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           const SizedBox(height: 16),
           Text(
             description,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 16,
               color: ColorConstants.textSecondaryColor,
               height: 1.5,

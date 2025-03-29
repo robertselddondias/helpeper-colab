@@ -5,7 +5,6 @@ import 'package:helpper/core/utils/validators.dart';
 import 'package:helpper/core/widgets/custom_button.dart';
 import 'package:helpper/core/widgets/custom_text_field.dart';
 import 'package:helpper/features/auth/auth_controller.dart';
-import 'package:helpper/routes/app_routes.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -66,7 +65,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(
+          icon: const Icon(
             Icons.arrow_back_ios,
             color: ColorConstants.primaryColor,
           ),
@@ -147,7 +146,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   const SizedBox(height: 24),
 
-                  Text(
+                  const Text(
                     'Tipo de conta',
                     style: TextStyle(
                       fontSize: 16,
@@ -200,7 +199,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: Center(
                         child: Text(
                           _authController.error.value,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: ColorConstants.errorColor,
                             fontSize: 14,
                           ),
@@ -304,7 +303,7 @@ class _AccountTypeCard extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               title,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: ColorConstants.textPrimaryColor,
@@ -313,7 +312,7 @@ class _AccountTypeCard extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               description,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 12,
                 color: ColorConstants.textSecondaryColor,
               ),

@@ -420,7 +420,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
             style: BorderStyle.solid,
           ),
         ),
-        child: Column(
+        child: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
@@ -428,15 +428,15 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
               size: 48,
               color: ColorConstants.primaryColor,
             ),
-            const SizedBox(height: 16),
-            const Text(
+            SizedBox(height: 16),
+            Text(
               'Adicionar imagens',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
               ),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             Text(
               'Recomendado: pelo menos 3 imagens',
               style: TextStyle(
@@ -480,7 +480,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                       style: BorderStyle.solid,
                     ),
                   ),
-                  child: Column(
+                  child: const Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
@@ -488,7 +488,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                         size: 24,
                         color: ColorConstants.primaryColor,
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: 8),
                       Text(
                         'Adicionar',
                         style: TextStyle(
@@ -586,14 +586,14 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
           },
         ),
         const SizedBox(height: 8),
-        Row(
+        const Row(
           children: [
             Icon(
               Icons.info_outline,
               size: 16,
               color: ColorConstants.infoColor,
             ),
-            const SizedBox(width: 8),
+            SizedBox(width: 8),
             Expanded(
               child: Text(
                 'Adicione fotos de qualidade que mostrem bem o seu serviço',

@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -76,7 +75,8 @@ class ProfileController extends GetxController {
               .count()
               .get();
 
-          reviewsCount.value = reviewsSnapshot.count;
+          // CORREÇÃO: AggregateQuerySnapshot.count() é um método, não uma propriedade
+          reviewsCount.value = reviewsSnapshot.count();
         }
       }
     } catch (e) {
@@ -121,7 +121,8 @@ class ProfileController extends GetxController {
           .count()
           .get();
 
-      hiredServicesCount.value = hiredSnapshot.count;
+      // CORREÇÃO: AggregateQuerySnapshot.count() é um método, não uma propriedade
+      hiredServicesCount.value = hiredSnapshot.count();
 
       // Carregar contagem de serviços concluídos
       final completedSnapshot = await _firestore
@@ -131,7 +132,8 @@ class ProfileController extends GetxController {
           .count()
           .get();
 
-      completedRequestsCount.value = completedSnapshot.count;
+      // CORREÇÃO: AggregateQuerySnapshot.count() é um método, não uma propriedade
+      completedRequestsCount.value = completedSnapshot.count();
 
       // Carregar contagem de avaliações dadas
       final reviewsSnapshot = await _firestore
@@ -140,7 +142,8 @@ class ProfileController extends GetxController {
           .count()
           .get();
 
-      givenReviewsCount.value = reviewsSnapshot.count;
+      // CORREÇÃO: AggregateQuerySnapshot.count() é um método, não uma propriedade
+      givenReviewsCount.value = reviewsSnapshot.count();
     } catch (e) {
       debugPrint('Erro ao carregar dados do cliente: $e');
     }
@@ -232,8 +235,16 @@ class ProfileController extends GetxController {
         {'photoUrl': downloadURL},
       );
 
-      // Atualizar o modelo de usuário no controlador
-      await _authController._fetchUserData(userId);
+      // CORREÇÃO: A verificação de reloadUserData usando null não é correta porque
+      // estamos verificando se existe um método, não se ele é nulo
+      // Vamos reescrever esta parte:
+
+      // Obter os dados atualizados do usuário do Firestore
+      final updatedUser = await _authRepository.getUserFromFirestore(userId);
+      if (updatedUser != null) {
+        // Atualizar o modelo de usuário no controlador
+        _authController.userModel.value = updatedUser;
+      }
 
       Get.back(); // Fechar o diálogo de carregamento
 
@@ -302,10 +313,10 @@ class ProfileController extends GetxController {
             ),
             TextButton(
               onPressed: () => Get.back(result: true),
-              child: const Text('Excluir'),
               style: TextButton.styleFrom(
                 foregroundColor: Colors.red,
               ),
+              child: const Text('Excluir'),
             ),
           ],
         ),
@@ -370,8 +381,15 @@ class ProfileController extends GetxController {
         data,
       );
 
-      // Atualizar o modelo de usuário no controlador
-      await _authController._fetchUserData(userId);
+      // CORREÇÃO: Mesmo problema da verificação reloadUserData
+      // Vamos simplificar e usar diretamente o método do repositório
+
+      // Obter os dados atualizados do usuário do Firestore
+      final updatedUser = await _authRepository.getUserFromFirestore(userId);
+      if (updatedUser != null) {
+        // Atualizar o modelo de usuário no controlador
+        _authController.userModel.value = updatedUser;
+      }
 
       Get.back(); // Fechar o diálogo de carregamento
 

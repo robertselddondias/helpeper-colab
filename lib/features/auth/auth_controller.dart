@@ -110,7 +110,9 @@ class AuthController extends GetxController {
       await _authRepository.signInWithPhone(
         phone,
             (PhoneAuthCredential credential) async {
-          await _auth.signInWithCredential(credential);
+          // ERRO: await _auth.signInWithCredential(credential);
+          // CORREÇÃO:
+          await _authRepository.signInWithCredential(credential);
         },
             (FirebaseAuthException e) {
           isLoading.value = false;
@@ -156,6 +158,19 @@ class AuthController extends GetxController {
     } catch (e) {
       isLoading.value = false;
       error.value = e.toString();
+    }
+  }
+
+  Future<void> reloadUserData() async {
+    if (firebaseUser.value != null) {
+      try {
+        isLoading.value = true;
+        userModel.value = await _authRepository.getUserFromFirestore(firebaseUser.value!.uid);
+        isLoading.value = false;
+      } catch (e) {
+        isLoading.value = false;
+        error.value = e.toString();
+      }
     }
   }
 

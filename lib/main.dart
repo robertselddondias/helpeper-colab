@@ -4,6 +4,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:helpper/core/theme/app_theme.dart';
+import 'package:helpper/features/auth/auth_controller.dart';
+import 'package:helpper/features/chat/chat_controller.dart';
+import 'package:helpper/features/notifications/notifications_controller.dart';
+import 'package:helpper/features/payments/payments_controller.dart';
+import 'package:helpper/features/profile/profile_controller.dart';
+import 'package:helpper/features/requests/requests_controller.dart';
+import 'package:helpper/features/reviews/reviews_controller.dart';
+import 'package:helpper/features/services/services_controller.dart';
 import 'package:helpper/routes/app_pages.dart';
 import 'package:helpper/routes/app_routes.dart';
 import 'package:helpper/data/services/firebase_service.dart';
@@ -11,29 +19,49 @@ import 'package:helpper/data/services/firebase_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Carregar variáveis de ambiente
+  // Load environment variables
   await dotenv.load(fileName: ".env");
 
-  // Inicializar Firebase
+  // Initialize Firebase
   await Firebase.initializeApp();
 
-  // Inicializar serviços Firebase
+  // Initialize Firebase services
   await Get.putAsync(() => FirebaseService().init());
 
-  // Configurar orientação do app
+  // Configure app orientation
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
 
-  // Configurar cor da barra de status
+  // Configure status bar style
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.dark,
     statusBarBrightness: Brightness.light,
   ));
 
+  // Setup controllers
+  _setupControllers();
+
   runApp(const HelppApp());
+}
+
+void _setupControllers() {
+  Get.put(AuthController(), permanent: true);
+
+  Get.lazyPut(() => ServicesController(), fenix: true);
+
+  Get.lazyPut(() => RequestsController(), fenix: true);
+
+  Get.lazyPut(() => ProfileController(), fenix: true);
+
+  Get.lazyPut(() => ChatController(), fenix: true);
+
+  Get.lazyPut(() => ReviewsController(), fenix: true);
+  Get.lazyPut(() => PaymentsController(), fenix: true);
+
+  Get.lazyPut(() => NotificationsController(), fenix: true);
 }
 
 class HelppApp extends StatelessWidget {
@@ -46,7 +74,7 @@ class HelppApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.light, // Pode ser alterado para .system ou .dark
+      themeMode: ThemeMode.light, // Can be changed to .system or .dark
       initialRoute: AppRoutes.SPLASH,
       getPages: AppPages.routes,
       defaultTransition: Transition.fadeIn,

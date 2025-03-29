@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:helpper/core/constants/color_constants.dart';
 import 'package:helpper/core/utils/validators.dart';
@@ -109,7 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Center(
                         child: Text(
                           _authController.error.value,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: ColorConstants.errorColor,
                             fontSize: 14,
                           ),

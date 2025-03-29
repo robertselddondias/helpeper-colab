@@ -2,17 +2,29 @@ import 'package:get/get.dart';
 import 'package:helpper/features/auth/screens/login_screen.dart';
 import 'package:helpper/features/auth/screens/register_screen.dart';
 import 'package:helpper/features/auth/screens/verification_screen.dart';
+import 'package:helpper/features/category_screen.dart';
+import 'package:helpper/features/chat/chat_binding.dart';
+import 'package:helpper/features/forgot_password_screen.dart';
+import 'package:helpper/features/home_screen.dart';
+import 'package:helpper/features/notifications/screen/notifications_screen.dart';
 import 'package:helpper/features/onboarding_screen.dart';
+import 'package:helpper/features/payments/screen/earnings_screen.dart';
+import 'package:helpper/features/payments/screen/payment_methods_screen.dart';
+import 'package:helpper/features/phone_login_screen.dart';
 import 'package:helpper/features/profile/screens/profile_screen.dart';
 import 'package:helpper/features/profile/screens/edit_profile_screen.dart';
+import 'package:helpper/features/requests/screens/request_service_screen.dart';
+import 'package:helpper/features/reviews/screen/add_review_screen.dart';
+import 'package:helpper/features/reviews/screen/reviews_screen.dart';
+import 'package:helpper/features/search_screen.dart';
 import 'package:helpper/features/services/screens/services_list_screen.dart';
 import 'package:helpper/features/services/screens/add_service_screen.dart';
 import 'package:helpper/features/services/screens/service_detail_screen.dart';
-import 'package:helpper/features/requests/screens/requests_screen.dart';
 import 'package:helpper/features/requests/screens/request_detail_screen.dart';
 import 'package:helpper/features/chat/screens/chats_list_screen.dart';
 import 'package:helpper/features/chat/screens/chat_detail_screen.dart';
-import 'package:helpper/routes/app_routes.dart';
+import 'package:helpper/features/settings_screen.dart';
+import 'package:helpper/features/splash_screen.dart';
 import 'package:helpper/routes/app_routes.dart';
 
 class AppPages {
@@ -108,7 +120,7 @@ class AppPages {
     // Solicitações
     GetPage(
       name: AppRoutes.REQUESTS,
-      page: () => const RequestsScreen(),
+      page: () => const RequestServiceScreen(),
       transition: Transition.fadeIn,
     ),
     GetPage(
@@ -138,11 +150,13 @@ class AppPages {
     GetPage(
       name: AppRoutes.CHATS,
       page: () => const ChatsListScreen(),
+      binding: ChatBinding(),
       transition: Transition.fadeIn,
     ),
     GetPage(
       name: AppRoutes.CHAT_DETAIL,
       page: () => const ChatDetailScreen(),
+      binding: ChatBinding(),
       transition: Transition.rightToLeft,
     ),
 

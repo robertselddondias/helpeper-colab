@@ -284,7 +284,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         children: [
           Text(
             skill,
-            style: TextStyle(
+            style: const TextStyle(
               color: ColorConstants.primaryColor,
               fontWeight: FontWeight.w500,
             ),

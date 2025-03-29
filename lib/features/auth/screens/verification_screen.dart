@@ -105,7 +105,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(
+          icon: const Icon(
             Icons.arrow_back_ios,
             color: ColorConstants.primaryColor,
           ),
@@ -151,7 +151,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                   padding: const EdgeInsets.only(top: 16.0),
                   child: Text(
                     _authController.error.value,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: ColorConstants.errorColor,
                       fontSize: 14,
                     ),
@@ -164,7 +164,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
+                  const Text(
                     'Não recebeu o código? ',
                     style: TextStyle(
                       color: ColorConstants.textSecondaryColor,
@@ -212,7 +212,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
         keyboardType: TextInputType.number,
         textAlign: TextAlign.center,
         maxLength: 1,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.bold,
           color: ColorConstants.textPrimaryColor,

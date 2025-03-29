@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:helpper/core/constants/color_constants.dart';
 import 'package:helpper/features/auth/auth_controller.dart';
-import 'package:helpper/features/profile/screens/profile_screen.dart';
-import 'package:helpper/features/services/screens/services_list_screen.dart';
 import 'package:helpper/features/chat/screens/chats_list_screen.dart';
+import 'package:helpper/features/profile/screens/profile_screen.dart';
 import 'package:helpper/features/requests/screens/requests_screen.dart';
+import 'package:helpper/features/services/screens/services_list_screen.dart';
 import 'package:helpper/routes/app_routes.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -17,7 +17,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final AuthController _authController = Get.find<AuthController>();
-  int _currentIndex = 0;
+  final RxInt _currentIndex = 0.obs;
 
   final List<Widget> _screens = [
     const ServicesListScreen(),
@@ -34,17 +34,18 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   void _onItemTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
+    _currentIndex.value = index;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _screens[_currentIndex],
+    return Obx(() => Scaffold(
+      body: IndexedStack(
+        index: _currentIndex.value,
+        children: _screens,
+      ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
+        currentIndex: _currentIndex.value,
         onTap: _onItemTapped,
         type: BottomNavigationBarType.fixed,
         selectedItemColor: ColorConstants.primaryColor,
@@ -73,16 +74,13 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      floatingActionButton: Obx(() {
-        if (_currentIndex == 0 && _authController.userModel.value?.isProvider == true) {
-          return FloatingActionButton(
-            backgroundColor: ColorConstants.primaryColor,
-            child: const Icon(Icons.add),
-            onPressed: () => Get.toNamed(AppRoutes.ADD_SERVICE),
-          );
-        }
-        return const SizedBox.shrink();
-      }),
-    );
+      floatingActionButton: _currentIndex.value == 0 && _authController.userModel.value?.isProvider == true
+          ? FloatingActionButton(
+        backgroundColor: ColorConstants.primaryColor,
+        child: const Icon(Icons.add),
+        onPressed: () => Get.toNamed(AppRoutes.ADD_SERVICE),
+      )
+          : null,
+    ));
   }
 }

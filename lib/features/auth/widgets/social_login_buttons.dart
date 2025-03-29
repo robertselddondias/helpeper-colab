@@ -9,7 +9,7 @@ class SocialLoginButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AuthController _authController = Get.find<AuthController>();
+    final AuthController authController = Get.find<AuthController>();
 
     return Column(
       children: [
@@ -19,7 +19,7 @@ class SocialLoginButtons extends StatelessWidget {
               child: _SocialButton(
                 icon: 'assets/icons/google.png',
                 label: 'Google',
-                onPressed: () => _authController.signInWithGoogle(),
+                onPressed: () => authController.signInWithGoogle(),
               ),
             ),
             const SizedBox(width: 16),
@@ -57,7 +57,7 @@ class _SocialButton extends StatelessWidget {
         backgroundColor: Colors.white,
         foregroundColor: ColorConstants.textPrimaryColor,
         elevation: 0,
-        side: BorderSide(
+        side: const BorderSide(
           color: ColorConstants.borderColor,
           width: 1,
         ),

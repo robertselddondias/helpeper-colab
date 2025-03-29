@@ -438,4 +438,22 @@ class ServicesController extends GetxController {
       return null;
     }
   }
+
+  Future<String> getProviderName(String providerId) async {
+    try {
+      final doc = await _firestore
+          .collection('users')
+          .doc(providerId)
+          .get();
+
+      if (doc.exists) {
+        return doc.data()?['name'] ?? 'Prestador';
+      }
+
+      return 'Prestador';
+    } catch (e) {
+      debugPrint('Erro ao obter nome do provedor: $e');
+      return 'Prestador';
+    }
+  }
 }

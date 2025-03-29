@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:helpper/core/constants/color_constants.dart';
 import 'package:helpper/features/auth/auth_controller.dart';
 import 'package:helpper/routes/app_routes.dart';
-import 'package:helpper/core/constants/color_constants.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -96,7 +95,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
             const SizedBox(height: 24),
             FadeTransition(
               opacity: _animation,
-              child: Text(
+              child: const Text(
                 'Helpp',
                 style: TextStyle(
                   fontSize: 32,
@@ -108,7 +107,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
             const SizedBox(height: 8),
             FadeTransition(
               opacity: _animation,
-              child: Text(
+              child: const Text(
                 'Serviços locais em um só lugar',
                 style: TextStyle(
                   fontSize: 16,

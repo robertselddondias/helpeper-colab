@@ -132,9 +132,9 @@ class ProfileScreen extends StatelessWidget {
                               color: ColorConstants.primaryColor,
                               borderRadius: BorderRadius.circular(16),
                             ),
-                            child: Row(
+                            child: const Row(
                               mainAxisSize: MainAxisSize.min,
-                              children: const [
+                              children: [
                                 Icon(
                                   Icons.verified,
                                   color: Colors.white,
@@ -166,7 +166,7 @@ class ProfileScreen extends StatelessWidget {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(
+                                const Icon(
                                   Icons.star,
                                   color: ColorConstants.starColor,
                                   size: 14,
@@ -174,7 +174,7 @@ class ProfileScreen extends StatelessWidget {
                                 const SizedBox(width: 4),
                                 Text(
                                   user.rating!.toStringAsFixed(1),
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     color: ColorConstants.textPrimaryColor,
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
@@ -439,7 +439,7 @@ class ProfileScreen extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
                     color: ColorConstants.textSecondaryColor,
                   ),
@@ -557,7 +557,7 @@ class ProfileScreen extends StatelessWidget {
                         ),
                         child: Text(
                           service.category,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 12,
                             color: ColorConstants.primaryColor,
                             fontWeight: FontWeight.w500,
@@ -604,7 +604,7 @@ class ProfileScreen extends StatelessWidget {
                     children: [
                       Text(
                         'R\$ ${service.price.toStringAsFixed(2)}',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: ColorConstants.primaryColor,
@@ -612,14 +612,14 @@ class ProfileScreen extends StatelessWidget {
                       ),
                       Text(
                         ' / ${service.priceType}',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 14,
                           color: ColorConstants.textSecondaryColor,
                         ),
                       ),
                       const Spacer(),
                       if (service.rating > 0) ...[
-                        Icon(
+                        const Icon(
                           Icons.star,
                           size: 16,
                           color: ColorConstants.starColor,
@@ -627,7 +627,7 @@ class ProfileScreen extends StatelessWidget {
                         const SizedBox(width: 4),
                         Text(
                           service.rating.toStringAsFixed(1),
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
                             color: ColorConstants.textPrimaryColor,
@@ -635,7 +635,7 @@ class ProfileScreen extends StatelessWidget {
                         ),
                         Text(
                           ' (${service.ratingCount})',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 12,
                             color: ColorConstants.textSecondaryColor,
                           ),

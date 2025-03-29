@@ -70,7 +70,7 @@ class _CategoryServicesScreenState extends State<CategoryServicesScreen> {
         }
 
         if (services.isEmpty) {
-          return Center(
+          return const Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -79,7 +79,7 @@ class _CategoryServicesScreenState extends State<CategoryServicesScreen> {
                   size: 64,
                   color: ColorConstants.textSecondaryColor,
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 Text(
                   'Nenhum serviço encontrado',
                   style: TextStyle(
@@ -88,8 +88,8 @@ class _CategoryServicesScreenState extends State<CategoryServicesScreen> {
                     color: ColorConstants.textSecondaryColor,
                   ),
                 ),
-                const SizedBox(height: 8),
-                const Text(
+                SizedBox(height: 8),
+                Text(
                   'Não há serviços disponíveis nesta categoria',
                   style: TextStyle(
                     color: ColorConstants.textSecondaryColor,
@@ -177,7 +177,7 @@ class _CategoryServicesScreenState extends State<CategoryServicesScreen> {
                         ),
                         child: Text(
                           service.category,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 12,
                             color: ColorConstants.primaryColor,
                             fontWeight: FontWeight.w500,
@@ -185,7 +185,7 @@ class _CategoryServicesScreenState extends State<CategoryServicesScreen> {
                         ),
                       ),
                       const Spacer(),
-                      Icon(
+                      const Icon(
                         Icons.star,
                         size: 16,
                         color: ColorConstants.starColor,
@@ -200,7 +200,7 @@ class _CategoryServicesScreenState extends State<CategoryServicesScreen> {
                       ),
                       Text(
                         ' (${service.ratingCount})',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 12,
                           color: ColorConstants.textSecondaryColor,
                         ),
@@ -218,7 +218,7 @@ class _CategoryServicesScreenState extends State<CategoryServicesScreen> {
                   const SizedBox(height: 8),
                   Text(
                     service.description,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 14,
                       color: ColorConstants.textSecondaryColor,
                     ),
@@ -230,7 +230,7 @@ class _CategoryServicesScreenState extends State<CategoryServicesScreen> {
                     children: [
                       Text(
                         'R\$ ${service.price.toStringAsFixed(2)}',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: ColorConstants.primaryColor,
@@ -238,7 +238,7 @@ class _CategoryServicesScreenState extends State<CategoryServicesScreen> {
                       ),
                       Text(
                         ' / ${service.priceType}',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 14,
                           color: ColorConstants.textSecondaryColor,
                         ),

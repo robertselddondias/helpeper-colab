@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:helpper/core/constants/color_constants.dart';
 import 'package:helpper/core/utils/validators.dart';
@@ -52,8 +53,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   const SizedBox(height: 40),
                   Center(
-                    child: Image.asset(
-                      'assets/images/logo.png',
+                    child: SvgPicture.asset(
+                      'assets/images/logo-helpper.svg',
                       height: 80,
                     ),
                   ),

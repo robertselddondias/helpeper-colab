@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100">
+  <!-- Ícone Google -->
+  <g id="google-icon" transform="translate(50, 50)">
+    <!-- Círculo externo -->
+    <circle cx="0" cy="0" r="20" fill="white" stroke="#EFEFEF" stroke-width="1"/>
+    
+    <!-- Logo do Google com cores -->
+    <path d="M-10 -2 L0 -2 L0 -8 L10 -8 L10 2 L0 2 L0 12 L-10 12 Z" fill="#4285F4"/>
+    <path d="M10 -8 L10 2 L18 2 A20 20 0 0 0 10 -8" fill="#34A853"/>
+    <path d="M-10 12 L0 12 L0 2 L10 2 L10 12 L18 12 A20 20 0 0 0 18 2 L10 2 L-10 2 Z" fill="#FBBC05"/>
+    <path d="M-10 -2 L-10 2 L0 2 L0 -2 Z" fill="#EA4335"/>
+    <path d="M-10 -2 A20 20 0 0 1 10 -8 L0 -8 L0 -2 Z" fill="#EA4335"/>
+  </g>
+  
+  <!-- Ícone Telefone -->
+  <g id="phone-icon" transform="translate(150, 50)">
+    <!-- Círculo externo -->
+    <circle cx="0" cy="0" r="20" fill="white" stroke="#EFEFEF" stroke-width="1"/>
+    
+    <!-- Ícone de telefone -->
+    <path d="M-8 -12 L8 -12 C10 -12 12 -10 12 -8 L12 8 C12 10 10 12 8 12 L-8 12 C-10 12 -12 10 -12 8 L-12 -8 C-12 -10 -10 -12 -8 -12 Z" fill="none" stroke="#5D5FEF" stroke-width="2"/>
+    <circle cx="0" cy="5" r="3" fill="#5D5FEF"/>
+    <rect x="-5" y="-7" width="10" height="3" rx="1" fill="#5D5FEF"/>
+  </g>
+</svg>

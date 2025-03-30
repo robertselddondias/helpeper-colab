@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300">
+  <!-- Círculo de fundo -->
+  <circle cx="150" cy="150" r="120" fill="#3E7BFA" opacity="0.1"/>
+  
+  <!-- Balões de chat vazios -->
+  <path d="M110 120 L150 120 L150 150 L120 150 L110 160 L110 120" fill="white" stroke="#3E7BFA" stroke-width="2" stroke-dasharray="5,5"/>
+  <path d="M150 170 L190 170 L190 200 L180 210 L170 200 L150 200 L150 170" fill="white" stroke="#3E7BFA" stroke-width="2" stroke-dasharray="5,5"/>
+  
+  <!-- Ícone de chat -->
+  <circle cx="150" cy="150" r="25" fill="#3E7BFA" opacity="0.2"/>
+  <path d="M135 150 L165 150 M135 140 L165 140 M135 160 L165 160" stroke="#3E7BFA" stroke-width="2" stroke-linecap="round"/>
+  
+  <!-- Texto -->
+  <text x="150" y="230" font-family="Arial" font-size="16" fill="#3E7BFA" font-weight="bold" text-anchor="middle">Nenhuma conversa</text>
+  <text x="150" y="250" font-family="Arial" font-size="14" fill="#6F767E" text-anchor="middle">Inicie um chat com um prestador</text>
+</svg>

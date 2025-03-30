@@ -1,12 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:helpper/core/services/storage_service.dart';
 import 'package:helpper/data/models/user_model.dart';
 import 'package:helpper/data/repositories/auth_repository.dart';
 import 'package:helpper/routes/app_routes.dart';
 
 class AuthController extends GetxController {
   final AuthRepository _authRepository = AuthRepository();
+
+  final StorageService _storageService = Get.find<StorageService>();
 
   final Rx<User?> firebaseUser = Rx<User?>(null);
   final Rx<UserModel?> userModel = Rx<UserModel?>(null);
@@ -19,12 +22,26 @@ class AuthController extends GetxController {
   void onInit() {
     super.onInit();
     firebaseUser.bindStream(_authRepository.authStateChanges);
+    _checkLocalUserData();
     ever(firebaseUser, _setInitialScreen);
+  }
+
+  Future<void> _checkLocalUserData() async {
+    UserModel? localUser = await _storageService.getUserData();
+    if (localUser != null) {
+      userModel.value = localUser;
+    }
   }
 
   void _setInitialScreen(User? user) async {
     if (user == null) {
-      Get.offAllNamed(AppRoutes.LOGIN);
+      // Verifica onboarding apenas quando não estiver logado
+      bool hasSeenOnboarding = await _storageService.hasSeenOnboarding();
+      if (hasSeenOnboarding) {
+        Get.offAllNamed(AppRoutes.LOGIN);
+      } else {
+        Get.offAllNamed(AppRoutes.ONBOARDING);
+      }
     } else {
       await _fetchUserData(user.uid);
       Get.offAllNamed(AppRoutes.HOME);
@@ -35,6 +52,12 @@ class AuthController extends GetxController {
     try {
       isLoading.value = true;
       userModel.value = await _authRepository.getUserFromFirestore(uid);
+
+      // Salvar dados do usuário localmente
+      if (userModel.value != null) {
+        await _storageService.saveUserData(userModel.value!);
+      }
+
       isLoading.value = false;
     } catch (e) {
       isLoading.value = false;
@@ -198,6 +221,7 @@ class AuthController extends GetxController {
   Future<void> signOut() async {
     try {
       await _authRepository.signOut();
+      await _storageService.clearUserData();
     } catch (e) {
       error.value = e.toString();
     }

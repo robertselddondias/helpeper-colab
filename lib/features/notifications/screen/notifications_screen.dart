@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:helpper/core/constants/color_constants.dart';
 import 'package:helpper/data/models/notification_model.dart';
@@ -43,17 +44,17 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         }
 
         if (_controller.notifications.isEmpty) {
-          return const Center(
+          return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.notifications_off_outlined,
-                  size: 64,
-                  color: ColorConstants.textSecondaryColor,
+                SvgPicture.asset(
+                  'assets/images/empty-notifications.svg',
+                  width: 150,
+                  height: 150,
                 ),
-                SizedBox(height: 16),
-                Text(
+                const SizedBox(height: 16),
+                const Text(
                   'Nenhuma notificação',
                   style: TextStyle(
                     fontSize: 18,
@@ -61,8 +62,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     color: ColorConstants.textSecondaryColor,
                   ),
                 ),
-                SizedBox(height: 8),
-                Text(
+                const SizedBox(height: 8),
+                const Text(
                   'Você não tem notificações no momento',
                   style: TextStyle(
                     color: ColorConstants.textSecondaryColor,

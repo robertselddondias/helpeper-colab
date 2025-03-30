@@ -71,7 +71,7 @@ class ServiceModel {
   // Incluir o novo campo também no método copyWith
   ServiceModel copyWith({
     // Campos existentes...
-    String? providerName,
+    String? providerName, required bool isActive,
   }) {
     return ServiceModel(
       id: id,
@@ -91,6 +91,29 @@ class ServiceModel {
       createdAt: createdAt,
       updatedAt: updatedAt,
       providerName: providerName ?? this.providerName,
+    );
+  }
+
+  factory ServiceModel.fromFirestore(DocumentSnapshot doc) {
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+    return ServiceModel(
+      id: doc.id,
+      providerId: data['providerId'] ?? '',
+      providerName: data['providerName'] ?? '',
+      title: data['title'] ?? '',
+      description: data['description'] ?? '',
+      category: data['category'] ?? '',
+      subCategories: List<String>.from(data['subCategories'] ?? []),
+      price: (data['price'] ?? 0.0).toDouble(),
+      priceType: data['priceType'] ?? '',
+      images: List<String>.from(data['images'] ?? []),
+      isActive: data['isActive'] ?? true,
+      location: data['location'],
+      address: data['address'],
+      rating: (data['rating'] ?? 0.0).toDouble(),
+      ratingCount: data['ratingCount'] ?? 0,
+      createdAt: (data['createdAt'] as Timestamp).toDate(),
+      updatedAt: data['updatedAt'] != null ? (data['updatedAt'] as Timestamp).toDate() : null,
     );
   }
 }

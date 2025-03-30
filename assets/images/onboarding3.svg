@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <!-- Fundo -->
+  <rect width="400" height="300" fill="#F8F9FC"/>
+  
+  <!-- Círculo de fundo -->
+  <circle cx="200" cy="150" r="120" fill="#F1651C" opacity="0.1"/>
+  
+  <!-- Prestador de serviço -->
+  <circle cx="200" cy="120" r="35" fill="#5D5FEF"/>
+  <path d="M165 170 C165 220, 235 220, 235 170" fill="#5D5FEF"/>
+  
+  <!-- Ferramentas/Serviços -->
+  <g transform="translate(125, 100) rotate(-20)">
+    <rect x="0" y="0" width="30" height="10" fill="#00C6A2"/>
+    <rect x="5" y="10" width="20" height="15" fill="#00C6A2"/>
+  </g>
+  
+  <g transform="translate(240, 110) rotate(20)">
+    <rect x="0" y="0" width="30" height="10" fill="#F1651C"/>
+    <rect x="5" y="10" width="20" height="15" fill="#F1651C"/>
+  </g>
+  
+  <!-- Ícones flutuantes de serviços -->
+  <circle cx="130" cy="90" r="20" fill="#5D5FEF" opacity="0.2"/>
+  <path d="M120 90 L140 90 M130 80 L130 100" stroke="#5D5FEF" stroke-width="2"/>
+  
+  <circle cx="270" cy="90" r="20" fill="#00C6A2" opacity="0.2"/>
+  <path d="M260 90 C260 80, 270 75, 280 90" stroke="#00C6A2" stroke-width="2" fill="none"/>
+  
+  <circle cx="250" cy="200" r="20" fill="#F1651C" opacity="0.2"/>
+  <path d="M240 200 L260 200 L260 210 L240 210 Z" stroke="#F1651C" stroke-width="2" fill="none"/>
+  
+  <circle cx="140" cy="200" r="20" fill="#5D5FEF" opacity="0.2"/>
+  <rect x="130" y="190" width="20" height="20" rx="2" stroke="#5D5FEF" stroke-width="2" fill="none"/>
+  
+  <!-- Linhas de conexão -->
+  <path d="M200 170 L130 90 M200 170 L270 90 M200 170 L250 200 M200 170 L140 200" stroke="#5D5FEF" stroke-width="1" stroke-dasharray="3,3"/>
+  
+  <text x="200" y="280" font-family="Arial" font-size="16" fill="#F1651C" font-weight="bold" text-anchor="middle">Ofereça seus serviços</text>
+</svg>

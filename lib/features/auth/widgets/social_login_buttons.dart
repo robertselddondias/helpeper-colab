@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:helpper/core/constants/color_constants.dart';
 import 'package:helpper/features/auth/auth_controller.dart';
@@ -17,7 +18,7 @@ class SocialLoginButtons extends StatelessWidget {
           children: [
             Expanded(
               child: _SocialButton(
-                icon: 'assets/icons/google.png',
+                icon: 'assets/images/google-icon.svg',
                 label: 'Google',
                 onPressed: () => authController.signInWithGoogle(),
               ),
@@ -25,7 +26,7 @@ class SocialLoginButtons extends StatelessWidget {
             const SizedBox(width: 16),
             Expanded(
               child: _SocialButton(
-                icon: 'assets/icons/phone.png',
+                icon: 'assets/images/phone-icon.svg',
                 label: 'Telefone',
                 onPressed: () => Get.toNamed(AppRoutes.PHONE_LOGIN),
               ),
@@ -69,7 +70,7 @@ class _SocialButton extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Image.asset(
+          SvgPicture.asset(
             icon,
             height: 24,
             width: 24,

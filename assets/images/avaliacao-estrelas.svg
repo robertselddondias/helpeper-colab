@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 100">
+  <!-- Estrela Cheia -->
+  <g id="estrela-cheia" transform="translate(25, 50)">
+    <path d="M0 -15 L3.5 -4.5 L15 -4.5 L5.5 2.5 L9 12.5 L0 6 L-9 12.5 L-5.5 2.5 L-15 -4.5 L-3.5 -4.5 Z" fill="#FFB800"/>
+  </g>
+  
+  <!-- Estrela Vazia -->
+  <g id="estrela-vazia" transform="translate(75, 50)">
+    <path d="M0 -15 L3.5 -4.5 L15 -4.5 L5.5 2.5 L9 12.5 L0 6 L-9 12.5 L-5.5 2.5 L-15 -4.5 L-3.5 -4.5 Z" fill="none" stroke="#FFB800" stroke-width="2"/>
+  </g>
+  
+  <!-- Estrela Meia -->
+  <g id="estrela-meia" transform="translate(125, 50)">
+    <path d="M0 -15 L3.5 -4.5 L15 -4.5 L5.5 2.5 L9 12.5 L0 6 L-9 12.5 L-5.5 2.5 L-15 -4.5 L-3.5 -4.5 Z" fill="none" stroke="#FFB800" stroke-width="2"/>
+    <path d="M0 -15 L3.5 -4.5 L15 -4.5 L5.5 2.5 L9 12.5 L0 6 L0 -15 Z" fill="#FFB800"/>
+  </g>
+  
+  <!-- Grupo de 5 Estrelas (Avaliação completa) -->
+  <g id="cinco-estrelas" transform="translate(200, 50)">
+    <g transform="translate(-50, 0)">
+      <path d="M0 -12 L2.8 -3.6 L12 -3.6 L4.4 2 L7.2 10 L0 4.8 L-7.2 10 L-4.4 2 L-12 -3.6 L-2.8 -3.6 Z" fill="#FFB800"/>
+    </g>
+    <g transform="translate(-25, 0)">
+      <path d="M0 -12 L2.8 -3.6 L12 -3.6 L4.4 2 L7.2 10 L0 4.8 L-7.2 10 L-4.4 2 L-12 -3.6 L-2.8 -3.6 Z" fill="#FFB800"/>
+    </g>
+    <g transform="translate(0, 0)">
+      <path d="M0 -12 L2.8 -3.6 L12 -3.6 L4.4 2 L7.2 10 L0 4.8 L-7.2 10 L-4.4 2 L-12 -3.6 L-2.8 -3.6 Z" fill="#FFB800"/>
+    </g>
+    <g transform="translate(25, 0)">
+      <path d="M0 -12 L2.8 -3.6 L12 -3.6 L4.4 2 L7.2 10 L0 4.8 L-7.2 10 L-4.4 2 L-12 -3.6 L-2.8 -3.6 Z" fill="#FFB800"/>
+    </g>
+    <g transform="translate(50, 0)">
+      <path d="M0 -12 L2.8 -3.6 L12 -3.6 L4.4 2 L7.2 10 L0 4.8 L-7.2 10 L-4.4 2 L-12 -3.6 L-2.8 -3.6 Z" fill="#FFB800"/>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <!-- Fundo -->
+  <rect width="400" height="300" fill="#F8F9FC"/>
+  
+  <!-- Círculo de fundo -->
+  <circle cx="200" cy="150" r="120" fill="#5D5FEF" opacity="0.1"/>
+  
+  <!-- Pessoa com telefone -->
+  <circle cx="150" cy="120" r="25" fill="#5D5FEF"/>
+  <path d="M125 170 C125 210, 175 210, 175 170" fill="#5D5FEF"/>
+  <rect x="140" y="150" width="20" height="35" rx="2" fill="#00C6A2"/>
+  
+  <!-- Marcadores de localização -->
+  <g>
+    <circle cx="250" cy="100" r="15" fill="#5D5FEF" opacity="0.6"/>
+    <circle cx="250" cy="100" r="5" fill="white"/>
+    <path d="M250 115 L250 140" stroke="#5D5FEF" stroke-width="3" stroke-dasharray="5,5"/>
+    
+    <circle cx="200" cy="180" r="15" fill="#5D5FEF" opacity="0.6"/>
+    <circle cx="200" cy="180" r="5" fill="white"/>
+    <path d="M200 195 L200 220" stroke="#5D5FEF" stroke-width="3" stroke-dasharray="5,5"/>
+    
+    <circle cx="300" cy="170" r="15" fill="#5D5FEF" opacity="0.6"/>
+    <circle cx="300" cy="170" r="5" fill="white"/>
+    <path d="M300 185 L300 210" stroke="#5D5FEF" stroke-width="3" stroke-dasharray="5,5"/>
+  </g>
+  
+  <!-- Prestadores de Serviço -->
+  <g>
+    <circle cx="250" cy="140" r="10" fill="#00C6A2"/>
+    <path d="M240 160 C240 175, 260 175, 260 160" fill="#00C6A2"/>
+    
+    <circle cx="200" cy="220" r="10" fill="#F1651C"/>
+    <path d="M190 240 C190 255, 210 255, 210 240" fill="#F1651C"/>
+    
+    <circle cx="300" cy="210" r="10" fill="#00C6A2"/>
+    <path d="M290 230 C290 245, 310 245, 310 230" fill="#00C6A2"/>
+  </g>
+  
+  <text x="200" y="280" font-family="Arial" font-size="16" fill="#5D5FEF" font-weight="bold" text-anchor="middle">Encontre serviços locais</text>
+</svg>

@@ -392,7 +392,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  service.provider?.name ?? 'N/A',
+                  service.providerName ?? 'N/A',
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,

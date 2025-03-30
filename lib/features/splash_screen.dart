@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:helpper/core/constants/color_constants.dart';
 import 'package:helpper/features/auth/auth_controller.dart';
@@ -33,7 +34,10 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
     _animationController.forward();
 
-    _checkAuth();
+    // Simulamos um pequeno atraso para mostrar a tela de splash
+    Future.delayed(const Duration(seconds: 2), () {
+      // Não fazemos nada aqui, apenas deixamos o AuthController gerenciar o fluxo
+    });
   }
 
   Future<void> _checkAuth() async {
@@ -85,8 +89,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
               opacity: _animation,
               child: ScaleTransition(
                 scale: _animation,
-                child: Image.asset(
-                  'assets/images/logo.png',
+                child: SvgPicture.asset(
+                  'assets/images/logo-helpper.svg',
                   width: 180,
                   height: 180,
                 ),

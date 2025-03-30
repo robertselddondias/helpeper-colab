@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:helpper/core/constants/color_constants.dart';
 import 'package:helpper/data/models/service_model.dart';
@@ -207,8 +208,8 @@ class _ServicesListScreenState extends State<ServicesListScreen> {
   }
 
   Widget _buildCategoryItem(String category) {
-    // Ícones correspondentes às categorias
-    final IconData icon = _getCategoryIcon(category);
+    // Caminho para o ícone SVG da categoria
+    String svgPath = _getCategorySvgPath(category);
 
     return GestureDetector(
       onTap: () => Get.toNamed(
@@ -224,10 +225,12 @@ class _ServicesListScreenState extends State<ServicesListScreen> {
               color: ColorConstants.primaryColor.withOpacity(0.1),
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              icon,
-              color: ColorConstants.primaryColor,
-              size: 28,
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: SvgPicture.asset(
+                svgPath,
+                color: ColorConstants.primaryColor,
+              ),
             ),
           ),
           const SizedBox(height: 8),
@@ -244,6 +247,37 @@ class _ServicesListScreenState extends State<ServicesListScreen> {
         ],
       ),
     );
+  }
+
+  String _getCategorySvgPath(String category) {
+    switch (category) {
+      case 'Limpeza':
+        return 'assets/images/categoria-limpeza.svg';
+      case 'Reformas':
+        return 'assets/images/categoria-reformas.svg';
+      case 'Beleza':
+        return 'assets/images/categoria-beleza.svg';
+      case 'Aulas':
+        return 'assets/images/categoria-aulas.svg';
+      case 'Tecnologia':
+        return 'assets/images/categoria-tecnologia.svg';
+      case 'Saúde':
+        return 'assets/images/categoria-saude.svg';
+      case 'Eventos':
+        return 'assets/images/categoria-eventos.svg';
+      case 'Animais':
+        return 'assets/images/categoria-animais.svg';
+      case 'Consertos':
+        return 'assets/images/categoria-consertos.svg';
+      case 'Jardinagem':
+        return 'assets/images/categoria-jardinagem.svg';
+      case 'Delivery':
+        return 'assets/images/categoria-delivery.svg';
+      case 'Transporte':
+        return 'assets/images/categoria-transporte.svg';
+      default:
+        return 'assets/images/categoria-outros.svg';
+    }
   }
 
   IconData _getCategoryIcon(String category) {
@@ -310,16 +344,17 @@ class _ServicesListScreenState extends State<ServicesListScreen> {
             child: CircularProgressIndicator(),
           )
         else if (services.isEmpty)
-          const Center(
+          Center(
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.search_off,
-                  size: 48,
-                  color: ColorConstants.textSecondaryColor,
+                SvgPicture.asset(
+                  'assets/images/empty-services.svg',
+                  width: 150,
+                  height: 150,
                 ),
-                SizedBox(height: 8),
-                Text(
+                const SizedBox(height: 8),
+                const Text(
                   'Nenhum serviço encontrado',
                   style: TextStyle(
                     color: ColorConstants.textSecondaryColor,

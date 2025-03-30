@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
+import 'package:helpper/core/services/storage_service.dart';
 import 'package:helpper/core/theme/app_theme.dart';
 import 'package:helpper/features/auth/auth_controller.dart';
 import 'package:helpper/features/chat/chat_controller.dart';
@@ -20,13 +20,16 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Load environment variables
-  await dotenv.load(fileName: ".env");
+  // await dotenv.load(fileName: ".env");
 
   // Initialize Firebase
   await Firebase.initializeApp();
 
   // Initialize Firebase services
   await Get.putAsync(() => FirebaseService().init());
+
+  final storageService = StorageService();
+  Get.put(storageService);
 
   // Configure app orientation
   await SystemChrome.setPreferredOrientations([

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:helpper/core/constants/color_constants.dart';
 import 'package:helpper/data/models/review_model.dart';
@@ -247,19 +248,19 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                       children: [
                         ...List.generate(
                           review.rating.toInt(),
-                              (index) => const Icon(
-                            Icons.star,
-                            size: 16,
-                            color: ColorConstants.starColor,
+                              (index) => SvgPicture.asset(
+                            'assets/images/estrela-cheia.svg',
+                            width: 16,
+                            height: 16,
                           ),
                         ),
                         ...List.generate(
                           5 - review.rating.toInt(),
-                              (index) => const Icon(
-                            Icons.star_border,
-                            size: 16,
-                            color: ColorConstants.starColor,
-                          ),
+                              (index) => SvgPicture.asset(
+                                'assets/images/estrela-vazia.svg',
+                                width: 16,
+                                height: 16,
+                              ),
                         ),
                         const SizedBox(width: 8),
                         Text(

@@ -64,19 +64,13 @@ class ProfileController extends GetxController {
         // Atualizar contadores
         final userData = docSnapshot.data()!;
 
-        // Dados comuns a prestadores e clientes
-        // ...
-
-        // Carregar contagem de avaliações se for prestador
         if (_authController.userModel.value!.isProvider) {
           final reviewsSnapshot = await _firestore
               .collection('reviews')
               .where('providerId', isEqualTo: userId)
-              .count()
               .get();
 
-          // CORREÇÃO: AggregateQuerySnapshot.count() é um método, não uma propriedade
-          reviewsCount.value = reviewsSnapshot.count();
+          reviewsCount.value = reviewsSnapshot.docs.length;
         }
       }
     } catch (e) {
@@ -121,8 +115,7 @@ class ProfileController extends GetxController {
           .count()
           .get();
 
-      // CORREÇÃO: AggregateQuerySnapshot.count() é um método, não uma propriedade
-      hiredServicesCount.value = hiredSnapshot.count();
+      hiredServicesCount.value = hiredSnapshot.count ?? 0;
 
       // Carregar contagem de serviços concluídos
       final completedSnapshot = await _firestore
@@ -133,7 +126,7 @@ class ProfileController extends GetxController {
           .get();
 
       // CORREÇÃO: AggregateQuerySnapshot.count() é um método, não uma propriedade
-      completedRequestsCount.value = completedSnapshot.count();
+      completedRequestsCount.value = completedSnapshot.count ?? 0;
 
       // Carregar contagem de avaliações dadas
       final reviewsSnapshot = await _firestore
@@ -143,7 +136,7 @@ class ProfileController extends GetxController {
           .get();
 
       // CORREÇÃO: AggregateQuerySnapshot.count() é um método, não uma propriedade
-      givenReviewsCount.value = reviewsSnapshot.count();
+      givenReviewsCount.value = reviewsSnapshot.count ?? 0;
     } catch (e) {
       debugPrint('Erro ao carregar dados do cliente: $e');
     }

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300">
+  <!-- Círculo de fundo -->
+  <circle cx="150" cy="150" r="120" fill="#5D5FEF" opacity="0.1"/>
+  
+  <!-- Cartões de serviços vazios -->
+  <rect x="80" y="110" width="70" height="90" rx="10" fill="white" stroke="#5D5FEF" stroke-width="1" stroke-dasharray="5,5"/>
+  <rect x="160" y="110" width="70" height="90" rx="10" fill="white" stroke="#5D5FEF" stroke-width="1" stroke-dasharray="5,5"/>
+  
+  <!-- Ícone de busca -->
+  <circle cx="150" cy="150" r="30" fill="white" stroke="#5D5FEF" stroke-width="2"/>
+  <circle cx="150" cy="150" r="20" fill="none" stroke="#5D5FEF" stroke-width="2"/>
+  <path d="M165 165 L180 180" stroke="#5D5FEF" stroke-width="3" stroke-linecap="round"/>
+  
+  <!-- Texto -->
+  <text x="150" y="220" font-family="Arial" font-size="16" fill="#5D5FEF" font-weight="bold" text-anchor="middle">Nenhum serviço encontrado</text>
+  <text x="150" y="240" font-family="Arial" font-size="14" fill="#6F767E" text-anchor="middle">Tente buscar com outras palavras</text>
+</svg>

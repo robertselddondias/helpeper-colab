@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300">
+  <!-- Círculo de fundo -->
+  <circle cx="150" cy="150" r="120" fill="#FFAD0F" opacity="0.1"/>
+  
+  <!-- Documento de solicitação vazio -->
+  <path d="M110 90 L190 90 L190 210 L110 210 Z" fill="white" stroke="#FFAD0F" stroke-width="2" stroke-dasharray="5,5"/>
+  <path d="M110 110 L190 110" stroke="#FFAD0F" stroke-width="2" stroke-dasharray="5,5"/>
+  <path d="M125 130 L175 130" stroke="#FFAD0F" stroke-width="2" stroke-dasharray="5,5"/>
+  <path d="M125 150 L175 150" stroke="#FFAD0F" stroke-width="2" stroke-dasharray="5,5"/>
+  <path d="M125 170 L175 170" stroke="#FFAD0F" stroke-width="2" stroke-dasharray="5,5"/>
+  
+  <!-- Ícone de caixa de entrada -->
+  <path d="M110 170 L135 190 L165 190 L190 170" stroke="#FFAD0F" stroke-width="2" fill="none"/>
+  <rect x="125" y="190" width="50" height="30" fill="#FFAD0F" opacity="0.2"/>
+  
+  <!-- Texto -->
+  <text x="150" y="240" font-family="Arial" font-size="16" fill="#FFAD0F" font-weight="bold" text-anchor="middle">Nenhuma solicitação</text>
+  <text x="150" y="260" font-family="Arial" font-size="14" fill="#6F767E" text-anchor="middle">Suas solicitações aparecerão aqui</text>
+</svg>

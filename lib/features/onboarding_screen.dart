@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:helpper/core/constants/color_constants.dart';
+import 'package:helpper/core/services/storage_service.dart';
 import 'package:helpper/core/widgets/custom_button.dart';
 import 'package:helpper/routes/app_routes.dart';
 
@@ -19,17 +21,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     {
       'title': 'Encontre serviços locais',
       'description': 'Encontre os melhores prestadores de serviços perto de você com apenas alguns toques.',
-      'image': 'assets/images/onboarding1.png',
+      'image': 'assets/images/onboarding1.svg',
     },
     {
       'title': 'Contrate com segurança',
       'description': 'Todos os prestadores são verificados e avaliados pela comunidade.',
-      'image': 'assets/images/onboarding2.png',
+      'image': 'assets/images/onboarding2.svg',
     },
     {
       'title': 'Ofereça seus serviços',
       'description': 'É um profissional? Cadastre seus serviços e comece a receber solicitações.',
-      'image': 'assets/images/onboarding3.png',
+      'image': 'assets/images/onboarding3.svg',
     },
   ];
 
@@ -52,7 +54,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   void _navigateToLogin() {
-    _markOnboardingAsSeen();
+    final StorageService _storageService = Get.find<StorageService>();
+    _storageService.setOnboardingAsSeen();
     Get.offAllNamed(AppRoutes.LOGIN);
   }
 
@@ -133,7 +136,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Image.asset(
+          SvgPicture.asset(
             imagePath,
             height: 250,
           ),

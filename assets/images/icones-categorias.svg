@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400">
+  <!-- Ícone Limpeza -->
+  <g id="limpeza" transform="translate(50, 50)">
+    <circle cx="50" cy="50" r="40" fill="#5D5FEF" opacity="0.1"/>
+    <path d="M35 35 C35 35, 35 65, 65 65 M65 35 C65 35, 65 65, 35 65" stroke="#5D5FEF" stroke-width="3" fill="none"/>
+    <rect x="40" y="30" width="20" height="40" rx="2" fill="#5D5FEF" opacity="0.3"/>
+    <path d="M45 25 L55 25 L55 30 L45 30 Z" fill="#5D5FEF"/>
+  </g>
+  
+  <!-- Ícone Reformas -->
+  <g id="reformas" transform="translate(150, 50)">
+    <circle cx="50" cy="50" r="40" fill="#5D5FEF" opacity="0.1"/>
+    <path d="M30 60 L45 45 L40 40 L50 30 L60 40 L55 45 L70 60" stroke="#5D5FEF" stroke-width="3" fill="none"/>
+    <rect x="30" y="60" width="40" height="5" rx="2" fill="#5D5FEF"/>
+    <path d="M55 45 L60 50 L45 65 L40 60 Z" fill="#5D5FEF"/>
+  </g>
+  
+  <!-- Ícone Tecnologia -->
+  <g id="tecnologia" transform="translate(250, 50)">
+    <circle cx="50" cy="50" r="40" fill="#5D5FEF" opacity="0.1"/>
+    <rect x="30" y="35" width="40" height="30" rx="2" fill="none" stroke="#5D5FEF" stroke-width="2"/>
+    <path d="M30 45 L70 45" stroke="#5D5FEF" stroke-width="2"/>
+    <rect x="45" y="65" width="10" height="5" fill="#5D5FEF"/>
+    <rect x="40" y="70" width="20" height="2" fill="#5D5FEF"/>
+  </g>
+  
+  <!-- Ícone Beleza -->
+  <g id="beleza" transform="translate(350, 50)">
+    <circle cx="50" cy="50" r="40" fill="#5D5FEF" opacity="0.1"/>
+    <path d="M40 30 C40 30, 35 40, 40 60 C42 65, 50 70, 60 60 C65 55, 65 45, 60 30" stroke="#5D5FEF" stroke-width="3" fill="none"/>
+    <path d="M50 40 L50 55" stroke="#5D5FEF" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="50" cy="60" r="4" fill="#5D5FEF"/>
+  </g>
+  
+  <!-- Ícone Aulas -->
+  <g id="aulas" transform="translate(450, 50)">
+    <circle cx="50" cy="50" r="40" fill="#5D5FEF" opacity="0.1"/>
+    <path d="M30 50 L50 40 L70 50 L50 60 Z" fill="#5D5FEF"/>
+    <path d="M40 53 L40 63 C40 65, 45 70, 50 70 C55 70, 60 65, 60 63 L60 53" stroke="#5D5FEF" stroke-width="2" fill="none"/>
+    <path d="M50 60 L50 70" stroke="#5D5FEF" stroke-width="2"/>
+  </g>
+  
+  <!-- Ícone Saúde -->
+  <g id="saude" transform="translate(50, 150)">
+    <circle cx="50" cy="50" r="40" fill="#5D5FEF" opacity="0.1"/>
+    <path d="M35 50 L65 50 M50 35 L50 65" stroke="#5D5FEF" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="50" cy="50" r="25" stroke="#5D5FEF" stroke-width="2" fill="none"/>
+  </g>
+  
+  <!-- Ícone Eventos -->
+  <g id="eventos" transform="translate(150, 150)">
+    <circle cx="50" cy="50" r="40" fill="#5D5FEF" opacity="0.1"/>
+    <path d="M35 30 L65 30 L65 65 L35 65 Z" stroke="#5D5FEF" stroke-width="2" fill="none"/>
+    <path d="M35 40 L65 40" stroke="#5D5FEF" stroke-width="2"/>
+    <path d="M43 25 L43 35 M57 25 L57 35" stroke="#5D5FEF" stroke-width="2"/>
+    <circle cx="43" cy="50" r="2" fill="#5D5FEF"/>
+    <circle cx="57" cy="50" r="2" fill="#5D5FEF"/>
+    <circle cx="43" cy="57" r="2" fill="#5D5FEF"/>
+    <circle cx="57" cy="57" r="2" fill="#5D5FEF"/>
+  </g>
+  
+  <!-- Ícone Animais -->
+  <g id="animais" transform="translate(250, 150)">
+    <circle cx="50" cy="50" r="40" fill="#5D5FEF" opacity="0.1"/>
+    <circle cx="38" cy="38" r="5" fill="#5D5FEF"/>
+    <circle cx="62" cy="38" r="5" fill="#5D5FEF"/>
+    <circle cx="38" cy="62" r="5" fill="#5D5FEF"/>
+    <circle cx="62" cy="62" r="5" fill="#5D5FEF"/>
+    <circle cx="50" cy="50" r="10" fill="#5D5FEF"/>
+    <path d="M50 40 L50 35" stroke="#5D5FEF" stroke-width="2" stroke-linecap="round"/>
+    <path d="M60 50 L65 50" stroke="#5D5FEF" stroke-width="2" stroke-linecap="round"/>
+    <path d="M50 60 L50 65" stroke="#5D5FEF" stroke-width="2" stroke-linecap="round"/>
+    <path d="M40 50 L35 50" stroke="#5D5FEF" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Ícone Consertos -->
+  <g id="consertos" transform="translate(350, 150)">
+    <circle cx="50" cy="50" r="40" fill="#5D5FEF" opacity="0.1"/>
+    <path d="M35 35 C35 35, 35 45, 45 45 C55 45, 55 35, 55 35" stroke="#5D5FEF" stroke-width="3" fill="none"/>
+    <rect x="42" y="45" width="6" height="20" fill="#5D5FEF"/>
+    <rect x="35" y="65" width="20" height="5" rx="2" fill="#5D5FEF"/>
+    <path d="M65 45 L55 55 L65 65" stroke="#5D5FEF" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  
+  <!-- Ícone Jardinagem -->
+  <g id="jardinagem" transform="translate(450, 150)">
+    <circle cx="50" cy="50" r="40" fill="#5D5FEF" opacity="0.1"/>
+    <path d="M40 70 L60 70" stroke="#5D5FEF" stroke-width="2"/>
+    <path d="M50 30 L50 70" stroke="#5D5FEF" stroke-width="2"/>
+    <path d="M50 45 C40 45, 35 40, 35 30 C35 30, 45 30, 50 40" fill="#5D5FEF"/>
+    <path d="M50 45 C60 45, 65 40, 65 30 C65 30, 55 30, 50 40" fill="#5D5FEF"/>
+  </g>
+  
+  <!-- Ícone Delivery -->
+  <g id="delivery" transform="translate(50, 250)">
+    <circle cx="50" cy="50" r="40" fill="#5D5FEF" opacity="0.1"/>
+    <rect x="25" y="40" width="30" height="20" fill="#5D5FEF"/>
+    <rect x="55" y="45" width="20" height="15" fill="#5D5FEF"/>
+    <circle cx="35" cy="65" r="5" stroke="#5D5FEF" stroke-width="2" fill="none"/>
+    <circle cx="65" cy="65" r="5" stroke="#5D5FEF" stroke-width="2" fill="none"/>
+    <path d="M25 55 L25 65 L30 65" stroke="#5D5FEF" stroke-width="2" fill="none"/>
+    <path d="M40 65 L60 65" stroke="#5D5FEF" stroke-width="2" fill="none"/>
+  </g>
+  
+  <!-- Ícone Transporte -->
+  <g id="transporte" transform="translate(150, 250)">
+    <circle cx="50" cy="50" r="40" fill="#5D5FEF" opacity="0.1"/>
+    <path d="M25 50 L75 50" stroke="#5D5FEF" stroke-width="2"/>
+    <path d="M30 50 L40 35 L60 35 L70 50" stroke="#5D5FEF" stroke-width="2" fill="none"/>
+    <rect x="30" y="50" width="40" height="15" fill="#5D5FEF"/>
+    <circle cx="35" cy="65" r="5" stroke="#5D5FEF" stroke-width="2" fill="white"/>
+    <circle cx="65" cy="65" r="5" stroke="#5D5FEF" stroke-width="2" fill="white"/>
+  </g>
+  
+  <!-- Ícone Outros -->
+  <g id="outros" transform="translate(250, 250)">
+    <circle cx="50" cy="50" r="40" fill="#5D5FEF" opacity="0.1"/>
+    <circle cx="35" cy="40" r="5" fill="#5D5FEF"/>
+    <circle cx="50" cy="40" r="5" fill="#5D5FEF"/>
+    <circle cx="65" cy="40" r="5" fill="#5D5FEF"/>
+    <path d="M30 60 L70 60" stroke="#5D5FEF" stroke-width="3" stroke-linecap="round"/>
+  </g>
+</svg>

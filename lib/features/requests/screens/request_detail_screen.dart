@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:helpper/core/constants/color_constants.dart';
 import 'package:helpper/core/widgets/custom_button.dart';
@@ -304,19 +305,28 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
   }
 
   Widget _buildStatusIndicator(String status) {
-    return Container(
+    return SizedBox(
       width: 40,
       height: 40,
-      decoration: BoxDecoration(
-        color: _getStatusColor(status).withOpacity(0.1),
-        shape: BoxShape.circle,
-      ),
-      child: Icon(
-        _getStatusIcon(status),
-        color: _getStatusColor(status),
-        size: 20,
+      child: SvgPicture.asset(
+        _getStatusIconPath(status),
       ),
     );
+  }
+
+  String _getStatusIconPath(String status) {
+    switch (status) {
+      case 'pending':
+        return 'assets/images/status-pendente.svg';
+      case 'accepted':
+        return 'assets/images/status-aceito.svg';
+      case 'completed':
+        return 'assets/images/status-concluido.svg';
+      case 'cancelled':
+        return 'assets/images/status-cancelado.svg';
+      default:
+        return 'assets/images/status-pendente.svg';
+    }
   }
 
   Color _getStatusColor(String status) {

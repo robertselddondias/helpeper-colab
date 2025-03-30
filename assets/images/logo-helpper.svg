@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 80">
+  <!-- Fundo do Logo -->
+  <rect width="240" height="80" rx="10" fill="#F8F9FC"/>
+  
+  <!-- Símbolo H estilizado -->
+  <path d="M40 20 L40 60 M70 20 L70 60 M40 40 L70 40" stroke="#5D5FEF" stroke-width="8" stroke-linecap="round"/>
+  
+  <!-- Texto da Logo -->
+  <text x="100" y="48" font-family="Arial" font-size="32" fill="#5D5FEF" font-weight="bold">Helpp</text>
+</svg>

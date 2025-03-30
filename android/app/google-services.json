@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "892736567296",
+    "project_id": "helpper-app",
+    "storage_bucket": "helpper-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:892736567296:android:f6f5767968df7d850f80e5",
+        "android_client_info": {
+          "package_name": "com.selddon.helpper.colab"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBClCnMk9rGKDObX8pzrwPfu4EFoaENhwY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

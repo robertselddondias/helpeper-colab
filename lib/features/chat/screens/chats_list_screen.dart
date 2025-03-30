@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:helpper/core/constants/color_constants.dart';
 import 'package:helpper/features/chat/chat_controller.dart';
@@ -37,17 +38,17 @@ class _ChatsListScreenState extends State<ChatsListScreen> {
         }
 
         if (_controller.chats.isEmpty) {
-          return const Center(
+          return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.chat_bubble_outline,
-                  size: 64,
-                  color: ColorConstants.textSecondaryColor,
+                SvgPicture.asset(
+                  'assets/images/empty-chats.svg',
+                  width: 150,
+                  height: 150,
                 ),
-                SizedBox(height: 16),
-                Text(
+                const SizedBox(height: 16),
+                const Text(
                   'Nenhuma conversa encontrada',
                   style: TextStyle(
                     fontSize: 18,
@@ -55,8 +56,8 @@ class _ChatsListScreenState extends State<ChatsListScreen> {
                     color: ColorConstants.textSecondaryColor,
                   ),
                 ),
-                SizedBox(height: 8),
-                Text(
+                const SizedBox(height: 8),
+                const Text(
                   'Inicie uma conversa com um prestador de serviços',
                   style: TextStyle(
                     color: ColorConstants.textSecondaryColor,

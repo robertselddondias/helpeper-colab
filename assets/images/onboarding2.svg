@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <!-- Fundo -->
+  <rect width="400" height="300" fill="#F8F9FC"/>
+  
+  <!-- Círculo de fundo -->
+  <circle cx="200" cy="150" r="120" fill="#00C6A2" opacity="0.1"/>
+  
+  <!-- Prestador -->
+  <circle cx="170" cy="130" r="30" fill="#5D5FEF"/>
+  <path d="M140 180 C140 220, 200 220, 200 180" fill="#5D5FEF"/>
+  
+  <!-- Cliente -->
+  <circle cx="240" cy="140" r="25" fill="#00C6A2"/>
+  <path d="M215 175 C215 205, 265 205, 265 175" fill="#00C6A2"/>
+  
+  <!-- Aperto de mão -->
+  <path d="M190 160 C200 150, 210 160, 220 150 C230 140, 240 150, 230 160" stroke="#F1651C" stroke-width="5" fill="none"/>
+  
+  <!-- Escudo de proteção -->
+  <path d="M185 150 L215 150 L215 210 L200 225 L185 210 Z" fill="#00C6A2" opacity="0.3" stroke="#00C6A2" stroke-width="2"/>
+  <path d="M200 170 L210 190 L190 200" stroke="#00C6A2" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Estrelas / Avaliações -->
+  <path d="M140 100 L145 90 L150 100 L140 95 L150 95 Z" fill="#F1651C"/>
+  <path d="M220 90 L225 80 L230 90 L220 85 L230 85 Z" fill="#F1651C"/>
+  <path d="M260 120 L265 110 L270 120 L260 115 L270 115 Z" fill="#F1651C"/>
+  
+  <text x="200" y="280" font-family="Arial" font-size="16" fill="#00C6A2" font-weight="bold" text-anchor="middle">Contrate com segurança</text>
+</svg>

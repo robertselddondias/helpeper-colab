@@ -90,6 +90,7 @@ class _ServicesListScreenState extends State<ServicesListScreen> {
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorConstants.backgroundColor,
@@ -133,11 +134,13 @@ class _ServicesListScreenState extends State<ServicesListScreen> {
                 ),
               ],
             ),
+            // Fixed-height content
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min, // Use min size to prevent expansion
                   children: [
                     _buildCategoryGrid(),
                     const SizedBox(height: 24),
@@ -156,6 +159,7 @@ class _ServicesListScreenState extends State<ServicesListScreen> {
                 ),
               ),
             ),
+            // Dynamic content using SliverList instead of SliverToBoxAdapter with ListView
             Obx(() {
               if (isLoadingCategories.value) {
                 return const SliverToBoxAdapter(
@@ -170,7 +174,7 @@ class _ServicesListScreenState extends State<ServicesListScreen> {
                       (context, index) {
                     final category = categoryServices[index];
                     return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 12.0),
+                      padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
                       child: _buildCategorySection(
                         category['category'],
                         category['services'],
@@ -181,6 +185,7 @@ class _ServicesListScreenState extends State<ServicesListScreen> {
                 ),
               );
             }),
+            // Add bottom padding
             const SliverToBoxAdapter(
               child: SizedBox(height: 80),
             ),
@@ -209,7 +214,7 @@ class _ServicesListScreenState extends State<ServicesListScreen> {
 
   Widget _buildCategoryItem(String category) {
     // Caminho para o ícone SVG da categoria
-    String svgPath = _getCategorySvgPath(category);
+    IconData iconData = _getCategoryIcon(category);
 
     return GestureDetector(
       onTap: () => Get.toNamed(
@@ -227,8 +232,8 @@ class _ServicesListScreenState extends State<ServicesListScreen> {
             ),
             child: Padding(
               padding: const EdgeInsets.all(12.0),
-              child: SvgPicture.asset(
-                svgPath,
+              child: Icon(
+                iconData,
                 color: ColorConstants.primaryColor,
               ),
             ),
@@ -247,37 +252,6 @@ class _ServicesListScreenState extends State<ServicesListScreen> {
         ],
       ),
     );
-  }
-
-  String _getCategorySvgPath(String category) {
-    switch (category) {
-      case 'Limpeza':
-        return 'assets/images/categoria-limpeza.svg';
-      case 'Reformas':
-        return 'assets/images/categoria-reformas.svg';
-      case 'Beleza':
-        return 'assets/images/categoria-beleza.svg';
-      case 'Aulas':
-        return 'assets/images/categoria-aulas.svg';
-      case 'Tecnologia':
-        return 'assets/images/categoria-tecnologia.svg';
-      case 'Saúde':
-        return 'assets/images/categoria-saude.svg';
-      case 'Eventos':
-        return 'assets/images/categoria-eventos.svg';
-      case 'Animais':
-        return 'assets/images/categoria-animais.svg';
-      case 'Consertos':
-        return 'assets/images/categoria-consertos.svg';
-      case 'Jardinagem':
-        return 'assets/images/categoria-jardinagem.svg';
-      case 'Delivery':
-        return 'assets/images/categoria-delivery.svg';
-      case 'Transporte':
-        return 'assets/images/categoria-transporte.svg';
-      default:
-        return 'assets/images/categoria-outros.svg';
-    }
   }
 
   IconData _getCategoryIcon(String category) {
@@ -344,26 +318,31 @@ class _ServicesListScreenState extends State<ServicesListScreen> {
             child: CircularProgressIndicator(),
           )
         else if (services.isEmpty)
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SvgPicture.asset(
-                  'assets/images/empty-services.svg',
-                  width: 150,
-                  height: 150,
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Nenhum serviço encontrado',
-                  style: TextStyle(
-                    color: ColorConstants.textSecondaryColor,
+        // Use a fixed height container for empty state to avoid layout jumps
+          Container(
+            height: 150,
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min, // Important: Prevent column from taking unlimited height
+                children: [
+                  SvgPicture.asset(
+                    'assets/images/empty-services.svg',
+                    width: 80,
+                    height: 80,
                   ),
-                ),
-              ],
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Nenhum serviço encontrado',
+                    style: TextStyle(
+                      color: ColorConstants.textSecondaryColor,
+                    ),
+                  ),
+                ],
+              ),
             ),
           )
         else
+        // Use a fixed height container for the horizontal list
           SizedBox(
             height: 220,
             child: ListView.builder(
@@ -516,35 +495,33 @@ class _ServicesListScreenState extends State<ServicesListScreen> {
       ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min, // Use min size to prevent expansion
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                category,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              category,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
               ),
-              TextButton(
-                onPressed: () => Get.toNamed(
-                  AppRoutes.CATEGORY_SERVICES,
-                  arguments: {'category': category},
-                ),
-                child: const Text('Ver todos'),
+            ),
+            TextButton(
+              onPressed: () => Get.toNamed(
+                AppRoutes.CATEGORY_SERVICES,
+                arguments: {'category': category},
               ),
-            ],
-          ),
+              child: const Text('Ver todos'),
+            ),
+          ],
         ),
         const SizedBox(height: 12),
         SizedBox(
           height: 220,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: EdgeInsets.zero, // Remove padding to save space
             itemCount: services.length,
             itemBuilder: (context, index) {
               final service = services[index];

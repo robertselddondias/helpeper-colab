@@ -11,7 +11,6 @@ import 'package:helpper/features/notifications/notifications_controller.dart';
 import 'package:helpper/features/payments/payments_controller.dart';
 import 'package:helpper/features/profile/profile_controller.dart';
 import 'package:helpper/features/requests/requests_controller.dart';
-import 'package:helpper/features/reviews/reviews_controller.dart';
 import 'package:helpper/features/services/services_controller.dart';
 import 'package:helpper/routes/app_pages.dart';
 import 'package:helpper/routes/app_routes.dart';
@@ -61,7 +60,6 @@ void _setupControllers() {
 
   Get.lazyPut(() => ChatController(), fenix: true);
 
-  Get.lazyPut(() => ReviewsController(), fenix: true);
   Get.lazyPut(() => PaymentsController(), fenix: true);
 
   Get.lazyPut(() => NotificationsController(), fenix: true);

@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:helpper/core/constants/color_constants.dart';
-import 'package:helpper/data/models/service_model.dart';
+import 'package:helpper/core/widgets/custom_button.dart';
 import 'package:helpper/features/auth/auth_controller.dart';
-import 'package:helpper/features/chat/screens/chats_list_screen.dart';
-import 'package:helpper/features/profile/screens/profile_screen.dart';
-import 'package:helpper/features/requests/screens/requests_screen.dart';
-import 'package:helpper/features/services/services_controller.dart';
+import 'package:helpper/features/profile/profile_controller.dart';
+import 'package:helpper/features/requests/requests_controller.dart';
 import 'package:helpper/routes/app_routes.dart';
+import 'package:intl/intl.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -16,411 +15,271 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
   final AuthController _authController = Get.find<AuthController>();
-  final RxInt _currentIndex = 0.obs;
+  final ProfileController _profileController = Get.find<ProfileController>();
+  final RequestsController _requestsController = Get.find<RequestsController>();
 
-  final List<Widget> _screens = [
-    const ServicesListScreen(),
-    const RequestsScreen(),
-    const ChatsListScreen(),
-    const ProfileScreen(),
-  ];
-
-  final List<String> _titles = [
-    'Serviços',
-    'Solicitações',
-    'Conversas',
-    'Perfil',
-  ];
-
-  void _onItemTapped(int index) {
-    _currentIndex.value = index;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ColorConstants.backgroundColor,
-      // Define a cor da barra de status para corresponder ao AppBar
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(0), // AppBar invisível só para definir cor da barra de status
-        child: AppBar(
-          backgroundColor: ColorConstants.primaryColor,
-          elevation: 0,
-          toolbarHeight: 0,
-          automaticallyImplyLeading: false,
-        ),
-      ),
-      body: Obx(() => IndexedStack(
-        index: _currentIndex.value,
-        children: _screens,
-      )),
-      floatingActionButton: Obx(() {
-        if (_currentIndex.value == 0 && _authController.userModel.value?.isProvider == true) {
-          return FloatingActionButton(
-            backgroundColor: ColorConstants.primaryColor,
-            child: const Icon(Icons.add),
-            onPressed: () => Get.toNamed(AppRoutes.ADD_SERVICE),
-          );
-        }
-        return const SizedBox.shrink();
-      }),
-      bottomNavigationBar: Obx(() {
-        final isTabletDevice = MediaQuery.of(context).size.width >= 600;
-        return BottomNavigationBar(
-          currentIndex: _currentIndex.value,
-          onTap: _onItemTapped,
-          type: BottomNavigationBarType.fixed,
-          selectedItemColor: ColorConstants.primaryColor,
-          unselectedItemColor: ColorConstants.textSecondaryColor,
-          elevation: 8,
-          selectedFontSize: isTabletDevice ? 14 : 12,
-          unselectedFontSize: isTabletDevice ? 12 : 10,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined),
-              activeIcon: Icon(Icons.home),
-              label: 'Início',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.assignment_outlined),
-              activeIcon: Icon(Icons.assignment),
-              label: 'Solicitações',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.chat_outlined),
-              activeIcon: Icon(Icons.chat),
-              label: 'Conversas',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline),
-              activeIcon: Icon(Icons.person),
-              label: 'Perfil',
-            ),
-          ],
-        );
-      }),
-    );
-  }
-}
-
-class ServicesListScreen extends StatefulWidget {
-  const ServicesListScreen({Key? key}) : super(key: key);
-
-  @override
-  State<ServicesListScreen> createState() => _ServicesListScreenState();
-}
-
-class _ServicesListScreenState extends State<ServicesListScreen> {
-  final ServicesController _controller = Get.find<ServicesController>();
-
-  final RxList<ServiceModel> recommendedServices = <ServiceModel>[].obs;
-  final RxList<ServiceModel> nearbyServices = <ServiceModel>[].obs;
-  final RxList<Map<String, dynamic>> categoryServices = <Map<String, dynamic>>[].obs;
-
-  final RxBool isLoadingRecommended = true.obs;
-  final RxBool isLoadingNearby = true.obs;
-  final RxBool isLoadingCategories = true.obs;
+  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
-    _loadServices();
-  }
-
-  Future<void> _loadServices() async {
-    _loadRecommendedServices();
-    _loadNearbyServices();
-    _loadCategoryServices();
-  }
-
-  Future<void> _loadRecommendedServices() async {
-    try {
-      isLoadingRecommended.value = true;
-      recommendedServices.value = await _controller.getRecommendedServices();
-      isLoadingRecommended.value = false;
-    } catch (e) {
-      isLoadingRecommended.value = false;
-      debugPrint('Erro ao carregar serviços recomendados: $e');
-    }
-  }
-
-  Future<void> _loadNearbyServices() async {
-    try {
-      isLoadingNearby.value = true;
-      nearbyServices.value = await _controller.getNearbyServices();
-      isLoadingNearby.value = false;
-    } catch (e) {
-      isLoadingNearby.value = false;
-      debugPrint('Erro ao carregar serviços próximos: $e');
-    }
-  }
-
-  Future<void> _loadCategoryServices() async {
-    try {
-      isLoadingCategories.value = true;
-
-      final categories = [
-        'Limpeza',
-        'Reformas',
-        'Tecnologia',
-        'Beleza',
-        'Aulas',
-      ];
-
-      categoryServices.clear();
-      for (var category in categories) {
-        final services = await _controller.getServicesByCategory(category);
-
-        if (services.isNotEmpty) {
-          categoryServices.add({
-            'category': category,
-            'services': services,
-          });
+    _tabController = TabController(length: 3, vsync: this);
+    _tabController.addListener(() {
+      // Update the selected tab in the controller
+      if (!_tabController.indexIsChanging) {
+        switch (_tabController.index) {
+          case 0:
+            _requestsController.selectedTab.value = 'pending';
+            break;
+          case 1:
+            _requestsController.selectedTab.value = 'accepted';
+            break;
+          case 2:
+            _requestsController.selectedTab.value = 'completed';
+            break;
         }
       }
+    });
 
-      isLoadingCategories.value = false;
-    } catch (e) {
-      isLoadingCategories.value = false;
-      debugPrint('Erro ao carregar serviços por categoria: $e');
-    }
+    // Load data
+    _profileController.loadProfileData();
+    _profileController.fetchServices();
+    _requestsController.loadRequests();
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorConstants.backgroundColor,
-      body: SafeArea(
-        top: false, // Não aplica SafeArea na parte superior para permitir que o AppBar se estenda até a barra de status
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            // Responsividade baseada no tamanho da tela
-            final isTablet = constraints.maxWidth >= 600;
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await _profileController.loadProfileData();
+          await _profileController.fetchServices();
+          await _requestsController.loadRequests();
+        },
+        child: CustomScrollView(
+          slivers: [
+            // App Bar with greeting and profile
+            SliverAppBar(
+              floating: true,
+              pinned: true,
+              snap: false,
+              backgroundColor: ColorConstants.primaryColor,
+              expandedHeight: 140,
+              flexibleSpace: FlexibleSpaceBar(
+                background: Container(
+                  padding: const EdgeInsets.fromLTRB(16, 80, 16, 16),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        ColorConstants.primaryColor,
+                        ColorConstants.primaryColor.withOpacity(0.8),
+                      ],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                    ),
+                  ),
+                  child: Obx(() {
+                    final user = _authController.userModel.value;
+                    if (user == null) {
+                      return const SizedBox.shrink();
+                    }
 
-            return RefreshIndicator(
-              onRefresh: _loadServices,
-              color: ColorConstants.primaryColor,
-              child: CustomScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                slivers: [
-                  // App Bar aprimorada com estética original
-                  SliverAppBar(
-                    backgroundColor: ColorConstants.primaryColor,
-                    expandedHeight: isTablet ? 150 : 130,
-                    titleSpacing: 16,
-                    pinned: true,
-                    stretch: true,
-                    elevation: 0,
-                    flexibleSpace: FlexibleSpaceBar(
-                      centerTitle: false,
-                      titlePadding: const EdgeInsets.only(
-                        left: 20,
-                        bottom: 16,
-                        right: 16,
-                      ),
-                      title: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            'Helpp',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: isTablet ? 26 : 20,
-                              color: Colors.white,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          Text(
-                            'Encontre os melhores serviços aqui',
-                            style: TextStyle(
-                              fontSize: isTablet ? 14 : 12,
-                              fontWeight: FontWeight.normal,
-                              color: Colors.white.withOpacity(0.9),
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ),
-                      background: Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              ColorConstants.primaryColor,
-                              ColorConstants.primaryColor.withOpacity(0.8),
+                    return Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // Greeting and date
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                _getGreeting(),
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.white70,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                user.name.split(' ')[0],
+                                style: const TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
                             ],
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
                           ),
                         ),
+
+                        // Stats summary in a row
+                        Row(
+                          children: [
+                            _buildQuickStat(
+                              'Requisições',
+                              _requestsController.getFilteredRequests().length.toString(),
+                              Icons.assignment_outlined,
+                            ),
+                            const SizedBox(width: 12),
+                            _buildQuickStat(
+                              'Serviços',
+                              _profileController.servicesCount.toString(),
+                              Icons.home_repair_service_outlined,
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
+                  }),
+                ),
+              ),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.chat_outlined, color: Colors.white),
+                  onPressed: () => Get.toNamed(AppRoutes.CHATS),
+                  tooltip: 'Mensagens',
+                ),
+                IconButton(
+                  icon: const Icon(Icons.notifications_outlined, color: Colors.white),
+                  onPressed: () => Get.toNamed(AppRoutes.NOTIFICATIONS),
+                  tooltip: 'Notificações',
+                ),
+                IconButton(
+                  icon: const Icon(Icons.account_circle_outlined, color: Colors.white),
+                  onPressed: () => Get.toNamed(AppRoutes.PROFILE),
+                  tooltip: 'Perfil',
+                ),
+              ],
+            ),
+
+            // Earnings overview card
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                child: _buildEarningsCard(),
+              ),
+            ),
+
+            // Requests section title
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Solicitações de Serviço',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    actions: [
-                      IconButton(
-                        icon: const Icon(Icons.search, color: Colors.white),
-                        onPressed: () => Get.toNamed(AppRoutes.SEARCH),
-                        padding: const EdgeInsets.all(8),
-                        iconSize: isTablet ? 28 : 24,
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.notifications_outlined, color: Colors.white),
-                        onPressed: () => Get.toNamed(AppRoutes.NOTIFICATIONS),
-                        padding: const EdgeInsets.all(8),
-                        iconSize: isTablet ? 28 : 24,
-                      ),
-                      const SizedBox(width: 4),
-                    ],
-                  ),
-
-                  // Conteúdo da página com padding adaptativo
-                  SliverPadding(
-                    padding: EdgeInsets.all(isTablet ? 24.0 : 16.0),
-                    sliver: SliverList(
-                      delegate: SliverChildListDelegate(
-                        [
-                          // Grade de categorias responsiva
-                          _buildCategoryGrid(isTablet),
-
-                          SizedBox(height: isTablet ? 32.0 : 24.0),
-
-                          // Seções de serviços responsivas
-                          _buildServicesSection(
-                            'Recomendados para você',
-                            isLoadingRecommended.value,
-                            recommendedServices,
-                            isTablet,
-                          ),
-
-                          SizedBox(height: isTablet ? 32.0 : 24.0),
-
-                          _buildServicesSection(
-                            'Perto de você',
-                            isLoadingNearby.value,
-                            nearbyServices,
-                            isTablet,
-                          ),
-
-                          // Seções por categoria
-                          Obx(() {
-                            if (isLoadingCategories.value) {
-                              return const Center(
-                                child: Padding(
-                                  padding: EdgeInsets.all(32.0),
-                                  child: CircularProgressIndicator(),
-                                ),
-                              );
-                            }
-
-                            if (categoryServices.isEmpty) {
-                              return const SizedBox.shrink();
-                            }
-
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: categoryServices.map((category) {
-                                return Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: isTablet ? 16.0 : 12.0,
-                                  ),
-                                  child: _buildServicesSection(
-                                    category['category'],
-                                    false,
-                                    category['services'],
-                                    isTablet,
-                                  ),
-                                );
-                              }).toList(),
-                            );
-                          }),
-
-                          // Espaço extra no final para evitar que o conteúdo fique atrás do FAB/navbar
-                          SizedBox(height: isTablet ? 100.0 : 80.0),
-                        ],
-                      ),
+                    IconButton(
+                      icon: const Icon(Icons.filter_list),
+                      onPressed: () {
+                        // Implement filtering options
+                      },
+                      tooltip: 'Filtrar',
                     ),
-                  ),
+                  ],
+                ),
+              ),
+            ),
+
+            // Tabs for request status
+            SliverPersistentHeader(
+              pinned: true,
+              delegate: _SliverTabBarDelegate(
+                TabBar(
+                  controller: _tabController,
+                  labelColor: ColorConstants.primaryColor,
+                  unselectedLabelColor: ColorConstants.textSecondaryColor,
+                  indicatorColor: ColorConstants.primaryColor,
+                  indicatorWeight: 3,
+                  tabs: const [
+                    Tab(text: 'Pendentes'),
+                    Tab(text: 'Em andamento'),
+                    Tab(text: 'Concluídas'),
+                  ],
+                ),
+              ),
+            ),
+
+            // Request list based on tab
+            SliverFillRemaining(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  _buildRequestsList('pending'),
+                  _buildRequestsList('accepted'),
+                  _buildRequestsList('completed'),
                 ],
               ),
-            );
-          },
+            ),
+          ],
         ),
+      ),
+      // FAB to add new service
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: ColorConstants.primaryColor,
+        child: const Icon(Icons.add),
+        onPressed: () => Get.toNamed(AppRoutes.ADD_SERVICE),
+        tooltip: 'Adicionar Serviço',
       ),
     );
   }
 
-  // Método modificado para construir a grade de categorias
-  Widget _buildCategoryGrid(bool isTablet) {
-    return SizedBox(
-      height: isTablet ? 140 : 120,
-      child: GridView.builder(
-        shrinkWrap: true,
-        scrollDirection: Axis.horizontal,
-        physics: const BouncingScrollPhysics(),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: isTablet ? 2 : 1,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
-          childAspectRatio: isTablet ? 1.2 : 1.0,
-        ),
-        itemCount: _controller.categories.length,
-        itemBuilder: (context, index) {
-          final category = _controller.categories[index];
-          return _buildCategoryItem(category, isTablet);
-        },
-      ),
-    );
+  String _getGreeting() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) {
+      return 'Bom dia';
+    } else if (hour < 18) {
+      return 'Boa tarde';
+    } else {
+      return 'Boa noite';
+    }
   }
 
-  // Método modificado para construir item de categoria
-  Widget _buildCategoryItem(String category, bool isTablet) {
-    // Caminho para o ícone SVG da categoria
-    IconData iconData = _getCategoryIcon(category);
-
-    return GestureDetector(
-      onTap: () => Get.toNamed(
-        AppRoutes.CATEGORY_SERVICES,
-        arguments: {'category': category},
+  Widget _buildQuickStat(String label, String value, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            width: isTablet ? 70 : 60,
-            height: isTablet ? 70 : 60,
-            decoration: BoxDecoration(
-              color: ColorConstants.primaryColor.withOpacity(0.1),
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.03),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
-                )
-              ],
-            ),
-            child: Icon(
-              iconData,
-              color: ColorConstants.primaryColor,
-              size: isTablet ? 32 : 28,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: Text(
-              category,
-              style: TextStyle(
-                fontSize: isTablet ? 16 : 14,
-                fontWeight: FontWeight.w500,
-                color: ColorConstants.textPrimaryColor,
+          Row(
+            children: [
+              Icon(icon, color: Colors.white, size: 14),
+              const SizedBox(width: 4),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+            ],
+          ),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 10,
+              color: Colors.white70,
             ),
           ),
         ],
@@ -428,377 +287,438 @@ class _ServicesListScreenState extends State<ServicesListScreen> {
     );
   }
 
-  // Método aprimorado para construir seção de serviços
-  Widget _buildServicesSection(
-      String title,
-      bool isLoading,
-      List<ServiceModel> services,
-      bool isTablet,
-      ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        // Cabeçalho com linha decorativa
-        Row(
-          children: [
-            Container(
-              width: 4,
-              height: 20,
-              decoration: BoxDecoration(
-                color: ColorConstants.primaryColor,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: isTablet ? 20 : 18,
-                fontWeight: FontWeight.bold,
-                color: ColorConstants.textPrimaryColor,
-              ),
-            ),
-            const Spacer(),
-            TextButton.icon(
-              onPressed: () => Get.toNamed(
-                AppRoutes.SEARCH,
-                arguments: {'title': title, 'category': title},
-              ),
-              icon: const Icon(Icons.arrow_forward, size: 16),
-              label: Text(
-                'Ver todos',
-                style: TextStyle(
-                  fontSize: isTablet ? 15 : 13,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              style: TextButton.styleFrom(
-                foregroundColor: ColorConstants.primaryColor,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                minimumSize: Size.zero,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-
-        // Conteúdo com tratamento de estados
-        if (isLoading)
-          Container(
-            height: isTablet ? 250 : 220,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.03),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: const Center(
-              child: CircularProgressIndicator(),
-            ),
-          )
-        else if (services.isEmpty)
-        // Estado vazio específico para cada seção
-          Container(
-            height: isTablet ? 180 : 150,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.search_off,
-                    size: isTablet ? 60 : 48,
-                    color: ColorConstants.textSecondaryColor.withOpacity(0.5),
-                  ),
-                  const SizedBox(height: 12),
-                  // Mensagem específica para recomendados e próximos
-                  Text(
-                    title == 'Recomendados para você' || title == 'Perto de você'
-                        ? 'Nenhum serviço encontrado'
-                        : 'Nenhum serviço disponível nesta categoria',
-                    style: TextStyle(
-                      fontSize: isTablet ? 16 : 14,
-                      fontWeight: FontWeight.w500,
-                      color: ColorConstants.textSecondaryColor,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  // Subtítulo com sugestão
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Text(
-                      title == 'Recomendados para você'
-                          ? 'Explore mais categorias para encontrar serviços'
-                          : title == 'Perto de você'
-                          ? 'Não encontramos serviços próximos a você no momento'
-                          : 'Tente explorar outras categorias',
-                      style: TextStyle(
-                        fontSize: isTablet ? 13 : 12,
-                        color: ColorConstants.textSecondaryColor,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          )
-        else
-        // Lista de serviços melhorada
-          SizedBox(
-            height: isTablet ? 270 : 240,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.symmetric(vertical: 4),
-              itemCount: services.length,
-              itemBuilder: (context, index) {
-                final service = services[index];
-                return _buildServiceCard(service, isTablet);
-              },
-            ),
-          ),
-      ],
-    );
-  }
-
-  Widget _buildServiceCard(ServiceModel service, bool isTablet) {
-    final cardWidth = isTablet ? 250.0 : 200.0;
-    final imageHeight = isTablet ? 150.0 : 120.0;
-
+  Widget _buildEarningsCard() {
     return GestureDetector(
-      onTap: () => Get.toNamed(
-        AppRoutes.SERVICE_DETAIL,
-        arguments: service,
-      ),
+      onTap: () => Get.toNamed(AppRoutes.EARNINGS),
       child: Container(
-        width: cardWidth,
-        margin: const EdgeInsets.only(right: 16),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          gradient: LinearGradient(
+            colors: [
+              ColorConstants.accentColor,
+              ColorConstants.accentColor.withOpacity(0.8),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              offset: const Offset(0, 2),
-              blurRadius: 6,
-              spreadRadius: 0,
+              color: ColorConstants.accentColor.withOpacity(0.4),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Stack para a imagem com badge de categoria
-            Stack(
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Imagem do serviço
-                ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(16),
-                    topRight: Radius.circular(16),
-                  ),
-                  child: service.images.isNotEmpty
-                      ? Image.network(
-                    service.images.first,
-                    width: cardWidth,
-                    height: imageHeight,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      width: cardWidth,
-                      height: imageHeight,
-                      color: ColorConstants.shimmerBaseColor,
-                      child: const Icon(
-                        Icons.image_not_supported_outlined,
-                        color: Colors.white54,
-                        size: 32,
-                      ),
-                    ),
-                  )
-                      : Container(
-                    width: cardWidth,
-                    height: imageHeight,
-                    color: ColorConstants.shimmerBaseColor,
-                    child: const Icon(
-                      Icons.image_not_supported_outlined,
-                      color: Colors.white54,
-                      size: 32,
-                    ),
+                const Text(
+                  'Ganhos do Mês',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white70,
                   ),
                 ),
-                // Badge de categoria flutuante
-                Positioned(
-                  top: 8,
-                  left: 8,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: ColorConstants.primaryColor.withOpacity(0.85),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Text(
-                      service.category,
-                      style: TextStyle(
-                        fontSize: isTablet ? 12 : 10,
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.calendar_today,
                         color: Colors.white,
-                        fontWeight: FontWeight.w600,
+                        size: 12,
                       ),
-                    ),
+                      const SizedBox(width: 4),
+                      Text(
+                        DateFormat('MMM yyyy').format(DateTime.now()),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
-            // Informações do serviço
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          service.title,
-                          style: TextStyle(
-                            fontSize: isTablet ? 16 : 14,
-                            fontWeight: FontWeight.w600,
-                            color: ColorConstants.textPrimaryColor,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+            const SizedBox(height: 16),
+            Obx(() {
+              final completedJobs = _authController.userModel.value?.completedJobs ?? 0;
+              // Note: In a real implementation, this should come from a dedicated earnings controller
+              final monthlyEarnings = 0.0; // Replace with actual earnings data
+
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        NumberFormat.currency(
+                          locale: 'pt_BR',
+                          symbol: 'R\$',
+                        ).format(monthlyEarnings),
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          service.description,
-                          style: TextStyle(
-                            fontSize: isTablet ? 13 : 11,
-                            color: ColorConstants.textSecondaryColor,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        '$completedJobs serviços realizados',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.white70,
                         ),
-                      ],
+                      ),
+                    ],
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      shape: BoxShape.circle,
                     ),
-                    // Rodapé com preço e avaliação
-                    Row(
-                      children: [
-                        // Preço
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'R\$ ${service.price.toStringAsFixed(2)}',
-                                style: TextStyle(
-                                  fontSize: isTablet ? 16 : 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: ColorConstants.primaryColor,
-                                ),
-                              ),
-                              Text(
-                                'por ${service.priceType}',
-                                style: TextStyle(
-                                  fontSize: isTablet ? 12 : 10,
-                                  color: ColorConstants.textSecondaryColor,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        // Avaliação
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: ColorConstants.starColor.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
-                            children: [
-                              const Icon(
-                                Icons.star,
-                                size: 16,
-                                color: ColorConstants.starColor,
-                              ),
-                              const SizedBox(width: 2),
-                              Text(
-                                service.rating.toStringAsFixed(1),
-                                style: TextStyle(
-                                  fontSize: isTablet ? 13 : 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: ColorConstants.starColor,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                    child: const Icon(
+                      Icons.arrow_forward,
+                      color: Colors.white,
                     ),
-                  ],
-                ),
-              ),
-            ),
+                  ),
+                ],
+              );
+            }),
           ],
         ),
       ),
     );
   }
 
-  // Ícone da categoria
-  IconData _getCategoryIcon(String category) {
-    switch (category.toLowerCase()) {
-      case 'limpeza':
-        return Icons.cleaning_services_outlined;
-      case 'reformas':
-        return Icons.home_repair_service_outlined;
-      case 'beleza':
-        return Icons.spa_outlined;
-      case 'aulas':
-        return Icons.school_outlined;
-      case 'tecnologia':
-        return Icons.computer_outlined;
-      case 'saúde':
-        return Icons.health_and_safety_outlined;
-      case 'eventos':
-        return Icons.celebration_outlined;
-      case 'animais':
-        return Icons.pets_outlined;
-      case 'consertos':
-        return Icons.build_outlined;
-      case 'jardinagem':
-        return Icons.yard_outlined;
-      case 'delivery':
-        return Icons.delivery_dining_outlined;
-      case 'transporte':
-        return Icons.local_shipping_outlined;
+  Widget _buildRequestsList(String status) {
+    return Obx(() {
+      if (_requestsController.isLoading.value) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      }
+
+      final requests = _requestsController.getFilteredRequests();
+
+      if (requests.isEmpty) {
+        return _buildEmptyState(status);
+      }
+
+      return ListView.separated(
+        padding: const EdgeInsets.all(16),
+        itemCount: requests.length,
+        separatorBuilder: (context, index) => const SizedBox(height: 16),
+        itemBuilder: (context, index) {
+          final request = requests[index];
+          return GestureDetector(
+            onTap: () => Get.toNamed(
+              AppRoutes.REQUEST_DETAIL,
+              arguments: request.id,
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    offset: const Offset(0, 2),
+                    blurRadius: 4,
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: ColorConstants.primaryColor.withOpacity(0.05),
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(16),
+                        topRight: Radius.circular(16),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          backgroundColor: ColorConstants.primaryColor,
+                          radius: 20,
+                          child: Text(
+                            request.clientName[0].toUpperCase(),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                request.clientName,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                'Solicitado em ${DateFormat('dd/MM/yyyy').format(request.createdAt)}',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: ColorConstants.textSecondaryColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Icon(
+                          Icons.arrow_forward_ios,
+                          size: 16,
+                          color: ColorConstants.textSecondaryColor,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Divider(height: 1),
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          request.serviceName,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          request.description,
+                          style: const TextStyle(
+                            color: ColorConstants.textSecondaryColor,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          children: [
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.calendar_today_outlined,
+                                  size: 16,
+                                  color: ColorConstants.textSecondaryColor,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  DateFormat('dd/MM/yyyy').format(request.scheduledDate),
+                                  style: const TextStyle(
+                                    color: ColorConstants.textSecondaryColor,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(width: 24),
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.access_time,
+                                  size: 16,
+                                  color: ColorConstants.textSecondaryColor,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  request.scheduledTime,
+                                  style: const TextStyle(
+                                    color: ColorConstants.textSecondaryColor,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'R\$ ${request.amount.toStringAsFixed(2)}',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: ColorConstants.primaryColor,
+                              ),
+                            ),
+                            _buildStatusChip(request.status),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    });
+  }
+
+  Widget _buildEmptyState(String status) {
+    String message;
+    String subMessage;
+    IconData icon;
+
+    switch (status) {
+      case 'pending':
+        message = 'Nenhuma solicitação pendente';
+        subMessage = 'Você não tem novas solicitações de serviço';
+        icon = Icons.inbox_outlined;
+        break;
+      case 'accepted':
+        message = 'Nenhuma solicitação em andamento';
+        subMessage = 'Você não tem serviços em andamento';
+        icon = Icons.engineering_outlined;
+        break;
+      case 'completed':
+        message = 'Nenhuma solicitação concluída';
+        subMessage = 'Você não tem serviços concluídos';
+        icon = Icons.check_circle_outline;
+        break;
       default:
-        return Icons.miscellaneous_services_outlined;
+        message = 'Nenhuma solicitação encontrada';
+        subMessage = 'Você não tem solicitações de serviço';
+        icon = Icons.inbox_outlined;
     }
+
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            icon,
+            size: 64,
+            color: ColorConstants.textSecondaryColor,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            message,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: ColorConstants.textSecondaryColor,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            subMessage,
+            style: const TextStyle(
+              color: ColorConstants.textSecondaryColor,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          if (status == 'pending')
+            CustomButton(
+              label: 'Adicionar Serviço',
+              onPressed: () => Get.toNamed(AppRoutes.ADD_SERVICE),
+              type: ButtonType.outline,
+              icon: Icons.add,
+              isFullWidth: false,
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatusChip(String status) {
+    Color color;
+    String label;
+
+    switch (status) {
+      case 'pending':
+        color = ColorConstants.warningColor;
+        label = 'Pendente';
+        break;
+      case 'accepted':
+        color = ColorConstants.infoColor;
+        label = 'Em andamento';
+        break;
+      case 'completed':
+        color = ColorConstants.successColor;
+        label = 'Concluído';
+        break;
+      case 'cancelled':
+        color = ColorConstants.errorColor;
+        label = 'Cancelado';
+        break;
+      default:
+        color = ColorConstants.textSecondaryColor;
+        label = status.capitalize ?? status;
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 12,
+        vertical: 6,
+      ),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: color.withOpacity(0.5),
+          width: 1,
+        ),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
+          color: color,
+        ),
+      ),
+    );
+  }
+}
+
+class _SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
+  final TabBar tabBar;
+
+  _SliverTabBarDelegate(this.tabBar);
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(
+      color: Colors.white,
+      child: tabBar,
+    );
+  }
+
+  @override
+  double get maxExtent => tabBar.preferredSize.height;
+
+  @override
+  double get minExtent => tabBar.preferredSize.height;
+
+  @override
+  bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
+    return false;
   }
 }

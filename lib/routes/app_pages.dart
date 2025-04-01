@@ -2,7 +2,6 @@ import 'package:get/get.dart';
 import 'package:helpper/features/auth/screens/login_screen.dart';
 import 'package:helpper/features/auth/screens/register_screen.dart';
 import 'package:helpper/features/auth/screens/verification_screen.dart';
-import 'package:helpper/features/category_screen.dart';
 import 'package:helpper/features/chat/chat_binding.dart';
 import 'package:helpper/features/chat/screens/chat_detail_screen.dart';
 import 'package:helpper/features/chat/screens/chats_list_screen.dart';
@@ -16,12 +15,10 @@ import 'package:helpper/features/phone_login_screen.dart';
 import 'package:helpper/features/profile/screens/edit_profile_screen.dart';
 import 'package:helpper/features/profile/screens/profile_screen.dart';
 import 'package:helpper/features/requests/screens/request_detail_screen.dart';
-import 'package:helpper/features/requests/screens/request_service_screen.dart';
-import 'package:helpper/features/reviews/screen/add_review_screen.dart';
-import 'package:helpper/features/reviews/screen/reviews_screen.dart';
 import 'package:helpper/features/search_screen.dart';
 import 'package:helpper/features/services/screens/add_service_screen.dart';
 import 'package:helpper/features/services/screens/service_detail_screen.dart';
+import 'package:helpper/features/services/screens/services_list_screen.dart';
 import 'package:helpper/features/settings_screen.dart';
 import 'package:helpper/features/splash_screen.dart';
 import 'package:helpper/routes/app_routes.dart';
@@ -106,42 +103,13 @@ class AppPages {
       transition: Transition.rightToLeft,
     ),
     GetPage(
-      name: AppRoutes.CATEGORY_SERVICES,
-      page: () => const CategoryServicesScreen(),
-      transition: Transition.rightToLeft,
-    ),
-    GetPage(
       name: AppRoutes.SEARCH,
       page: () => const SearchScreen(),
       transition: Transition.downToUp,
     ),
-
-    // Solicitações
-    GetPage(
-      name: AppRoutes.REQUESTS,
-      page: () => const RequestServiceScreen(),
-      transition: Transition.fadeIn,
-    ),
     GetPage(
       name: AppRoutes.REQUEST_DETAIL,
       page: () => const RequestDetailScreen(),
-      transition: Transition.rightToLeft,
-    ),
-    GetPage(
-      name: AppRoutes.REQUEST_SERVICE,
-      page: () => const RequestServiceScreen(),
-      transition: Transition.rightToLeft,
-    ),
-
-    // Avaliações
-    GetPage(
-      name: AppRoutes.REVIEWS,
-      page: () => const ReviewsScreen(),
-      transition: Transition.rightToLeft,
-    ),
-    GetPage(
-      name: AppRoutes.ADD_REVIEW,
-      page: () => const AddReviewScreen(),
       transition: Transition.rightToLeft,
     ),
 

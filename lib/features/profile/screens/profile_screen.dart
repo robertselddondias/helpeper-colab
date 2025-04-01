@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:helpper/core/constants/color_constants.dart';
 import 'package:helpper/core/widgets/custom_button.dart';
+import 'package:helpper/data/models/service_model.dart';
 import 'package:helpper/features/auth/auth_controller.dart';
 import 'package:helpper/features/profile/profile_controller.dart';
 import 'package:helpper/routes/app_routes.dart';
-import 'package:helpper/data/models/service_model.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -15,489 +15,714 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final ProfileController controller = Get.find<ProfileController>();
     final AuthController authController = Get.find<AuthController>();
+    final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       backgroundColor: ColorConstants.backgroundColor,
-      appBar: AppBar(
-        title: const Text('Meu Perfil'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings_outlined),
-            onPressed: () => Get.toNamed(AppRoutes.SETTINGS),
-          ),
-        ],
-      ),
       body: Obx(() {
         final user = authController.userModel.value;
         if (user == null) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(
+            child: CircularProgressIndicator(
+              color: ColorConstants.primaryColor,
+            ),
+          );
         }
 
-        return SingleChildScrollView(
-          child: Column(
-            children: [
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(24),
-                    bottomRight: Radius.circular(24),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      offset: const Offset(0, 4),
-                      blurRadius: 8,
+        return CustomScrollView(
+          slivers: [
+            // Sliver App Bar com perfil expandido
+            SliverAppBar(
+              expandedHeight: 220,
+              pinned: true,
+              backgroundColor: ColorConstants.primaryColor,
+              elevation: 0,
+              flexibleSpace: FlexibleSpaceBar(
+                background: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        ColorConstants.primaryColor,
+                        ColorConstants.primaryColor.withOpacity(0.8),
+                      ],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
                     ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    Stack(
+                  ),
+                  child: SafeArea(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        CircleAvatar(
-                          radius: 50,
-                          backgroundColor: ColorConstants.primaryColor.withOpacity(0.1),
-                          child: user.photoUrl != null
-                              ? ClipRRect(
-                            borderRadius: BorderRadius.circular(50),
-                            child: CachedNetworkImage(
-                              imageUrl: user.photoUrl!,
-                              fit: BoxFit.cover,
-                              width: 100,
-                              height: 100,
-                              placeholder: (context, url) =>
-                              const CircularProgressIndicator(),
-                              errorWidget: (context, url, error) =>
-                              const Icon(Icons.person, size: 50),
+                        // Avatar com badge de verificação
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            // Avatar circular com borda
+                            Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: 3,
+                                ),
+                              ),
+                              child: Hero(
+                                tag: 'profile-avatar',
+                                child: CircleAvatar(
+                                  radius: 50,
+                                  backgroundColor: Colors.white.withOpacity(0.2),
+                                  child: user.photoUrl != null
+                                      ? ClipRRect(
+                                    borderRadius: BorderRadius.circular(50),
+                                    child: CachedNetworkImage(
+                                      imageUrl: user.photoUrl!,
+                                      fit: BoxFit.cover,
+                                      width: 100,
+                                      height: 100,
+                                      placeholder: (context, url) => Container(
+                                        color: Colors.white.withOpacity(0.2),
+                                        child: const Center(
+                                          child: CircularProgressIndicator(
+                                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                            strokeWidth: 2.0,
+                                          ),
+                                        ),
+                                      ),
+                                      errorWidget: (context, url, error) => Container(
+                                        color: Colors.white.withOpacity(0.2),
+                                        child: const Icon(Icons.person,
+                                            size: 50,
+                                            color: Colors.white
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                      : Text(
+                                    user.name.substring(0, 1).toUpperCase(),
+                                    style: const TextStyle(
+                                      fontSize: 40,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ),
-                          )
-                              : Text(
-                            user.name.substring(0, 1).toUpperCase(),
-                            style: const TextStyle(
-                              fontSize: 40,
-                              fontWeight: FontWeight.bold,
-                              color: ColorConstants.primaryColor,
+
+                            // Botão para editar foto
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: GestureDetector(
+                                onTap: () => controller.pickProfileImage(),
+                                child: Container(
+                                  width: 34,
+                                  height: 34,
+                                  decoration: BoxDecoration(
+                                    color: ColorConstants.accentColor,
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.2),
+                                        blurRadius: 6,
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ],
+                                    border: Border.all(
+                                      color: Colors.white,
+                                      width: 2,
+                                    ),
+                                  ),
+                                  child: const Icon(
+                                    Icons.camera_alt_rounded,
+                                    color: Colors.white,
+                                    size: 18,
+                                  ),
+                                ),
+                              ),
                             ),
+
+                            // Badge de verificação
+                            if (user.isVerified)
+                              Positioned(
+                                bottom: 0,
+                                left: 0,
+                                child: Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: const BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.verified_rounded,
+                                    color: ColorConstants.successColor,
+                                    size: 20,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 16),
+
+                        // Nome do usuário
+                        Text(
+                          user.name,
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
                           ),
                         ),
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: Container(
-                            width: 32,
-                            height: 32,
-                            decoration: BoxDecoration(
-                              color: ColorConstants.primaryColor,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: Colors.white,
-                                width: 2,
-                              ),
-                            ),
-                            child: IconButton(
-                              padding: EdgeInsets.zero,
-                              icon: const Icon(
-                                Icons.camera_alt_outlined,
-                                color: Colors.white,
+
+                        const SizedBox(height: 4),
+
+                        // Rating e status
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            if (user.rating != null) ...[
+                              const Icon(
+                                Icons.star_rounded,
+                                color: ColorConstants.starColor,
                                 size: 18,
                               ),
-                              onPressed: () => controller.pickProfileImage(),
+                              const SizedBox(width: 4),
+                              Text(
+                                user.rating!.toStringAsFixed(1),
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                            ],
+
+                            // Status de provedor
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: user.isProvider
+                                    ? ColorConstants.accentColor.withOpacity(0.8)
+                                    : Colors.grey.withOpacity(0.8),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                user.isProvider ? 'Prestador' : 'Cliente',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
                             ),
-                          ),
+                          ],
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
-                    Text(
-                      user.name,
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
+                  ),
+                ),
+              ),
+              actions: [
+                IconButton(
+                  icon: const Icon(
+                      Icons.settings_outlined,
+                      color: Colors.white
+                  ),
+                  onPressed: () => Get.toNamed(AppRoutes.SETTINGS),
+                ),
+              ],
+            ),
+
+            // Conteúdo principal
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Ações do perfil
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        if (user.isVerified)
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: ColorConstants.primaryColor,
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: const Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.verified,
-                                  color: Colors.white,
-                                  size: 14,
-                                ),
-                                SizedBox(width: 4),
-                                Text(
-                                  'Verificado',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
+                        Expanded(
+                          child: CustomButton(
+                            label: 'Editar Perfil',
+                            onPressed: () => Get.toNamed(AppRoutes.EDIT_PROFILE),
+                            type: ButtonType.outline,
+                            size: ButtonSize.small,
+                            icon: Icons.edit_outlined,
                           ),
-                        if (user.rating != null) ...[
-                          const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: ColorConstants.starColor.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(
-                                  Icons.star,
-                                  color: ColorConstants.starColor,
-                                  size: 14,
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  user.rating!.toStringAsFixed(1),
-                                  style: const TextStyle(
-                                    color: ColorConstants.textPrimaryColor,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
+                        ),
+                        if (user.isProvider) ...[
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: CustomButton(
+                              label: 'Meus Ganhos',
+                              onPressed: () => Get.toNamed(AppRoutes.EARNINGS),
+                              type: ButtonType.outline,
+                              size: ButtonSize.small,
+                              icon: Icons.payments_outlined,
                             ),
                           ),
                         ],
                       ],
                     ),
-                    const SizedBox(height: 16),
-                    CustomButton(
-                      label: 'Editar Perfil',
-                      onPressed: () => Get.toNamed(AppRoutes.EDIT_PROFILE),
-                      type: ButtonType.outline,
-                      size: ButtonSize.small,
-                    ),
+
+                    const SizedBox(height: 24),
+
+                    // Estatísticas - Layout adaptativo baseado no tamanho da tela
+                    _buildStatisticsSection(user, controller, screenWidth),
+
+                    const SizedBox(height: 24),
+
+                    // Caso seja prestador, exibe habilidades
+                    if (user.isProvider)
+                      _buildSkillsSection(user, controller),
+
+                    const SizedBox(height: 24),
+
+                    // Meus serviços ou serviços que já contratou
+                    _buildServicesSection(user, controller),
+
+                    const SizedBox(height: 80), // Espaço para bottom navigation bar
                   ],
                 ),
               ),
-              const SizedBox(height: 16),
-              if (user.isProvider) ...[
-                _buildSection(
-                  context,
-                  'Estatísticas',
-                  [
-                    _buildStatItem(
-                      context,
-                      Icons.home_repair_service_outlined,
-                      'Serviços',
-                      '${controller.servicesCount.value}',
-                      ColorConstants.primaryColor,
-                    ),
-                    _buildStatItem(
-                      context,
-                      Icons.done_all_outlined,
-                      'Serviços Realizados',
-                      '${user.completedJobs}',
-                      ColorConstants.successColor,
-                    ),
-                    _buildStatItem(
-                      context,
-                      Icons.star_outline,
-                      'Avaliações',
-                      '${controller.reviewsCount.value}',
-                      ColorConstants.starColor,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                _buildSection(
-                  context,
-                  'Minhas habilidades',
-                  [
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: user.skills.isEmpty
-                          ? [
-                        _buildSkillItem(
-                          context,
-                          'Adicione suas habilidades',
-                          isPlaceholder: true,
-                        ),
-                      ]
-                          : user.skills
-                          .map((skill) => _buildSkillItem(context, skill))
-                          .toList(),
-                    ),
-                    const SizedBox(height: 8),
-                    TextButton.icon(
-                      onPressed: () => Get.toNamed(AppRoutes.EDIT_PROFILE),
-                      icon: const Icon(Icons.add_circle_outline),
-                      label: const Text('Adicionar habilidades'),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                _buildSection(
-                  context,
-                  'Meus serviços',
-                  [
-                    Obx(() {
-                      if (controller.isLoadingServices.value) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-
-                      if (controller.services.isEmpty) {
-                        return Column(
-                          children: [
-                            const SizedBox(height: 16),
-                            Image.asset(
-                              'assets/images/empty_services.png',
-                              height: 120,
-                            ),
-                            const SizedBox(height: 16),
-                            const Text(
-                              'Você ainda não tem serviços',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            const Text(
-                              'Adicione seus primeiros serviços para começar a receber solicitações',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: ColorConstants.textSecondaryColor,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            CustomButton(
-                              label: 'Adicionar Serviço',
-                              onPressed: () => Get.toNamed(AppRoutes.ADD_SERVICE),
-                              icon: Icons.add,
-                            ),
-                          ],
-                        );
-                      }
-
-                      return Column(
-                        children: [
-                          ListView.separated(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: controller.services.length,
-                            separatorBuilder: (context, index) => const SizedBox(height: 12),
-                            itemBuilder: (context, index) {
-                              final service = controller.services[index];
-                              return _buildServiceItem(context, service);
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                          CustomButton(
-                            label: 'Adicionar Serviço',
-                            onPressed: () => Get.toNamed(AppRoutes.ADD_SERVICE),
-                            icon: Icons.add,
-                          ),
-                        ],
-                      );
-                    }),
-                  ],
-                ),
-              ] else ...[
-                _buildSection(
-                  context,
-                  'Estatísticas',
-                  [
-                    _buildStatItem(
-                      context,
-                      Icons.home_repair_service_outlined,
-                      'Serviços Contratados',
-                      '${controller.hiredServicesCount.value}',
-                      ColorConstants.primaryColor,
-                    ),
-                    _buildStatItem(
-                      context,
-                      Icons.done_all_outlined,
-                      'Serviços Concluídos',
-                      '${controller.completedRequestsCount.value}',
-                      ColorConstants.successColor,
-                    ),
-                    _buildStatItem(
-                      context,
-                      Icons.star_outline,
-                      'Avaliações Dadas',
-                      '${controller.givenReviewsCount.value}',
-                      ColorConstants.starColor,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                _buildSection(
-                  context,
-                  'Serviços que você pode precisar',
-                  [
-                    CustomButton(
-                      label: 'Procurar Serviços',
-                      onPressed: () => Get.toNamed(AppRoutes.HOME),
-                      icon: Icons.search,
-                    ),
-                  ],
-                ),
-              ],
-              const SizedBox(height: 24),
-            ],
-          ),
+            ),
+          ],
         );
       }),
     );
   }
 
-  Widget _buildSection(
-      BuildContext context,
-      String title,
-      List<Widget> children,
-      ) {
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            offset: const Offset(0, 2),
-            blurRadius: 4,
+  // Widget para a seção de estatísticas
+  Widget _buildStatisticsSection(dynamic user, ProfileController controller, double screenWidth) {
+    // Layout adaptativo - grade ou uma coluna, dependendo do tamanho da tela
+    final isWideScreen = screenWidth > 360;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Estatísticas',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
           ),
-        ],
+        ),
+        const SizedBox(height: 12),
+        if (isWideScreen)
+        // Layout em grade para telas maiores
+          GridView.count(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            crossAxisCount: 2,
+            childAspectRatio: 2.2,
+            mainAxisSpacing: 12,
+            crossAxisSpacing: 12,
+            children: _buildStatItems(user, controller),
+          )
+        else
+        // Layout em coluna para telas menores
+          Column(
+            children: _buildStatItems(user, controller).map((widget) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: widget,
+              );
+            }).toList(),
+          ),
+      ],
+    );
+  }
+
+  // Lista de widgets para os itens de estatísticas
+  List<Widget> _buildStatItems(dynamic user, ProfileController controller) {
+    final isProvider = user.isProvider;
+
+    return [
+      _buildStatCard(
+        icon: Icons.home_repair_service_rounded,
+        title: isProvider ? 'Serviços' : 'Serviços Contratados',
+        value: isProvider
+            ? '${controller.servicesCount.value}'
+            : '${controller.hiredServicesCount.value}',
+        color: ColorConstants.primaryColor,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
+      _buildStatCard(
+        icon: Icons.done_all_rounded,
+        title: isProvider ? 'Serviços Realizados' : 'Serviços Concluídos',
+        value: isProvider
+            ? '${user.completedJobs}'
+            : '${controller.completedRequestsCount.value}',
+        color: ColorConstants.successColor,
+      ),
+      _buildStatCard(
+        icon: Icons.star_rounded,
+        title: isProvider ? 'Avaliações' : 'Avaliações Dadas',
+        value: isProvider
+            ? '${controller.reviewsCount.value}'
+            : '${controller.givenReviewsCount.value}',
+        color: ColorConstants.starColor,
+      ),
+      if (isProvider)
+        _buildStatCard(
+          icon: Icons.monetization_on_rounded,
+          title: 'Ganhos',
+          value: 'Ver',
+          color: ColorConstants.accentColor,
+          onTap: () => Get.toNamed(AppRoutes.EARNINGS),
+        )
+      else
+        _buildStatCard(
+          icon: Icons.favorite_rounded,
+          title: 'Favoritos',
+          value: '0',
+          color: Colors.red,
+        ),
+    ];
+  }
+
+  // Widget para um card de estatística individual
+  Widget _buildStatCard({
+    required IconData icon,
+    required String title,
+    required String value,
+    required Color color,
+    VoidCallback? onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              offset: const Offset(0, 2),
+              blurRadius: 8,
             ),
-          ),
-          const SizedBox(height: 16),
-          ...children,
-        ],
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                icon,
+                color: color,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: ColorConstants.textSecondaryColor,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    value,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: onTap != null ? color : ColorConstants.textPrimaryColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (onTap != null)
+              Icon(
+                Icons.arrow_forward_ios_rounded,
+                size: 14,
+                color: color,
+              ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildStatItem(
-      BuildContext context,
-      IconData icon,
-      String label,
-      String value,
-      Color color,
-      ) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      child: Row(
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
+  // Widget para a seção de habilidades
+  Widget _buildSkillsSection(dynamic user, ProfileController controller) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Minhas habilidades',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            child: Icon(
-              icon,
-              color: color,
-              size: 24,
+            TextButton.icon(
+              onPressed: () => Get.toNamed(AppRoutes.EDIT_PROFILE),
+              icon: const Icon(
+                Icons.add_circle_outline,
+                size: 18,
+              ),
+              label: const Text('Adicionar'),
+              style: TextButton.styleFrom(
+                padding: EdgeInsets.zero,
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
             ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                offset: const Offset(0, 2),
+                blurRadius: 8,
+              ),
+            ],
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: ColorConstants.textSecondaryColor,
+          child: user.skills.isEmpty
+              ? const Center(
+            child: Text(
+              'Adicione suas habilidades para que os clientes possam encontrá-lo mais facilmente',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: ColorConstants.textSecondaryColor,
+                fontSize: 14,
+              ),
+            ),
+          )
+              : Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: user.skills.map<Widget>((skill) {
+              return Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: ColorConstants.primaryColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: ColorConstants.primaryColor.withOpacity(0.3),
+                    width: 1,
                   ),
                 ),
-                Text(
-                  value,
+                child: Text(
+                  skill,
                   style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
+                    color: ColorConstants.primaryColor,
+                    fontWeight: FontWeight.w500,
                   ),
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Widget para a seção de serviços
+  Widget _buildServicesSection(dynamic user, ProfileController controller) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              user.isProvider ? 'Meus serviços' : 'Últimas contratações',
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            if (user.isProvider)
+              TextButton.icon(
+                onPressed: () => Get.toNamed(AppRoutes.ADD_SERVICE),
+                icon: const Icon(
+                  Icons.add_circle_outline,
+                  size: 18,
+                ),
+                label: const Text('Adicionar'),
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+              ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        if (user.isProvider)
+          Obx(() {
+            if (controller.isLoadingServices.value) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+
+            if (controller.services.isEmpty) {
+              return Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      offset: const Offset(0, 2),
+                      blurRadius: 8,
+                    ),
+                  ],
+                ),
+                child: Center(
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.home_repair_service_outlined,
+                        size: 48,
+                        color: ColorConstants.textSecondaryColor.withOpacity(0.5),
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Você ainda não tem serviços',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'Adicione seus primeiros serviços para começar a receber solicitações',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: ColorConstants.textSecondaryColor,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      CustomButton(
+                        label: 'Adicionar Serviço',
+                        onPressed: () => Get.toNamed(AppRoutes.ADD_SERVICE),
+                        icon: Icons.add,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
+
+            return ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: controller.services.length > 3 ? 3 : controller.services.length,
+              separatorBuilder: (context, index) => const SizedBox(height: 12),
+              itemBuilder: (context, index) {
+                final service = controller.services[index];
+                return _buildServiceCard(service, controller);
+              },
+            );
+          })
+        else
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  offset: const Offset(0, 2),
+                  blurRadius: 8,
                 ),
               ],
             ),
+            child: Center(
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.search_outlined,
+                    size: 48,
+                    color: ColorConstants.textSecondaryColor.withOpacity(0.5),
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Explore serviços',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Encontre prestadores de serviço qualificados próximos a você',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: ColorConstants.textSecondaryColor,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  CustomButton(
+                    label: 'Procurar Serviços',
+                    onPressed: () => Get.offNamed(AppRoutes.HOME),
+                    icon: Icons.search,
+                  ),
+                ],
+              ),
+            ),
           ),
-        ],
-      ),
+
+        // Mostrar mais serviços
+        if (user.isProvider && controller.services.length > 3)
+          Padding(
+            padding: const EdgeInsets.only(top: 12),
+            child: Center(
+              child: TextButton.icon(
+                onPressed: () {
+                  // Navegar para uma tela que mostre todos os serviços
+                },
+                icon: const Icon(Icons.grid_view_rounded),
+                label: const Text('Ver todos os serviços'),
+              ),
+            ),
+          ),
+      ],
     );
   }
 
-  Widget _buildSkillItem(
-      BuildContext context,
-      String skill, {
-        bool isPlaceholder = false,
-      }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 12,
-        vertical: 8,
-      ),
-      decoration: BoxDecoration(
-        color: isPlaceholder
-            ? ColorConstants.disabledColor
-            : ColorConstants.primaryColor.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(16),
-        border: isPlaceholder
-            ? null
-            : Border.all(
-          color: ColorConstants.primaryColor.withOpacity(0.5),
-          width: 1,
-        ),
-      ),
-      child: Text(
-        skill,
-        style: TextStyle(
-          color: isPlaceholder
-              ? ColorConstants.textSecondaryColor
-              : ColorConstants.primaryColor,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildServiceItem(
-      BuildContext context,
-      ServiceModel service,
-      ) {
-    return InkWell(
+  // Widget para card de serviço
+  Widget _buildServiceCard(ServiceModel service, ProfileController controller) {
+    return GestureDetector(
       onTap: () => Get.toNamed(
         AppRoutes.SERVICE_DETAIL,
         arguments: service,
@@ -505,148 +730,215 @@ class ProfileScreen extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: ColorConstants.borderColor,
-            width: 1,
-          ),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              offset: const Offset(0, 2),
+              blurRadius: 8,
+            ),
+          ],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (service.images.isNotEmpty)
-              ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(12),
-                  topRight: Radius.circular(12),
-                ),
-                child: CachedNetworkImage(
-                  imageUrl: service.images.first,
-                  height: 120,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => Container(
-                    height: 120,
-                    color: ColorConstants.shimmerBaseColor,
-                  ),
-                  errorWidget: (context, url, error) => Container(
-                    height: 120,
-                    color: ColorConstants.inputFillColor,
-                    child: const Icon(
-                      Icons.image_not_supported_outlined,
-                      color: ColorConstants.textSecondaryColor,
-                    ),
-                  ),
-                ),
-              ),
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Imagem do serviço
+              Stack(
                 children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: ColorConstants.primaryColor.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          service.category,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: ColorConstants.primaryColor,
-                            fontWeight: FontWeight.w500,
-                          ),
+                  AspectRatio(
+                    aspectRatio: 16 / 9,
+                    child: service.images.isNotEmpty
+                        ? CachedNetworkImage(
+                      imageUrl: service.images.first,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      placeholder: (context, url) => Container(
+                        color: ColorConstants.shimmerBaseColor,
+                      ),
+                      errorWidget: (context, url, error) => Container(
+                        color: ColorConstants.shimmerBaseColor,
+                        child: const Icon(
+                          Icons.image_not_supported_outlined,
+                          color: Colors.white54,
+                          size: 48,
                         ),
                       ),
-                      const Spacer(),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: service.isActive
-                              ? ColorConstants.successColor.withOpacity(0.1)
-                              : ColorConstants.errorColor.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          service.isActive ? 'Ativo' : 'Inativo',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: service.isActive
-                                ? ColorConstants.successColor
-                                : ColorConstants.errorColor,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
+                    )
+                        : Container(
+                      color: ColorConstants.shimmerBaseColor,
+                      child: const Icon(
+                        Icons.image_not_supported_outlined,
+                        color: Colors.white54,
+                        size: 48,
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    service.title,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Text(
-                        'R\$ ${service.price.toStringAsFixed(2)}',
+                  // Badge de status (ativo/inativo)
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: service.isActive
+                            ? ColorConstants.successColor
+                            : Colors.grey,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        service.isActive ? 'Ativo' : 'Inativo',
                         style: const TextStyle(
-                          fontSize: 16,
+                          color: Colors.white,
+                          fontSize: 12,
                           fontWeight: FontWeight.bold,
-                          color: ColorConstants.primaryColor,
                         ),
                       ),
-                      Text(
-                        ' / ${service.priceType}',
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: ColorConstants.textSecondaryColor,
-                        ),
-                      ),
-                      const Spacer(),
-                      if (service.rating > 0) ...[
-                        const Icon(
-                          Icons.star,
-                          size: 16,
-                          color: ColorConstants.starColor,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          service.rating.toStringAsFixed(1),
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: ColorConstants.textPrimaryColor,
-                          ),
-                        ),
-                        Text(
-                          ' (${service.ratingCount})',
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: ColorConstants.textSecondaryColor,
-                          ),
-                        ),
-                      ],
-                    ],
+                    ),
                   ),
                 ],
               ),
-            ),
-          ],
+
+              // Informações do serviço
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        // Categoria
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: ColorConstants.primaryColor.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            service.category,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: ColorConstants.primaryColor,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                        const Spacer(),
+                        // Rating
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.star_rounded,
+                              size: 16,
+                              color: ColorConstants.starColor,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              service.rating.toStringAsFixed(1),
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    // Título
+                    Text(
+                      service.title,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 8),
+                    // Preço
+                    Row(
+                      children: [
+                        Text(
+                          'R\$ ${service.price.toStringAsFixed(2)}',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: ColorConstants.primaryColor,
+                          ),
+                        ),
+                        Text(
+                          ' / ${service.priceType}',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: ColorConstants.textSecondaryColor,
+                          ),
+                        ),
+                        const Spacer(),
+                        // Botão de toggle ativo/inativo
+                        GestureDetector(
+                          onTap: () => controller.toggleServiceStatus(
+                              service.id,
+                              service.isActive
+                          ),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: service.isActive
+                                  ? ColorConstants.successColor.withOpacity(0.1)
+                                  : Colors.grey.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: service.isActive
+                                    ? ColorConstants.successColor
+                                    : Colors.grey,
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  service.isActive
+                                      ? Icons.toggle_on_rounded
+                                      : Icons.toggle_off_rounded,
+                                  size: 16,
+                                  color: service.isActive
+                                      ? ColorConstants.successColor
+                                      : Colors.grey,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  service.isActive ? 'Ativo' : 'Inativo',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: service.isActive
+                                        ? ColorConstants.successColor
+                                        : Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

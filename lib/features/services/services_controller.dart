@@ -205,6 +205,53 @@ class ServicesController extends GetxController {
     }
   }
 
+  Future<void> initializeCategories() async {
+    try {
+      // Check if categories already exist
+      final categoriesSnapshot = await _firestore.collection('categories').get();
+
+      if (categoriesSnapshot.docs.isEmpty) {
+        // Create a batch to add all categories at once
+        final batch = _firestore.batch();
+
+        // Add each category with its subcategories
+        for (var category in categories) {
+          final docRef = _firestore.collection('categories').doc(category);
+          batch.set(docRef, {
+            'name': category,
+            'subcategories': subcategories[category] ?? [],
+            'iconName': _getCategoryIconName(category),
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+        }
+
+        // Commit the batch
+        await batch.commit();
+        debugPrint('Categories initialized in Firestore');
+      }
+    } catch (e) {
+      debugPrint('Error initializing categories: $e');
+    }
+  }
+
+  String _getCategoryIconName(String category) {
+    switch (category) {
+      case 'Limpeza': return 'cleaning_services_outlined';
+      case 'Reformas': return 'home_repair_service_outlined';
+      case 'Beleza': return 'spa_outlined';
+      case 'Aulas': return 'school_outlined';
+      case 'Tecnologia': return 'computer_outlined';
+      case 'Saúde': return 'health_and_safety_outlined';
+      case 'Eventos': return 'celebration_outlined';
+      case 'Animais': return 'pets_outlined';
+      case 'Consertos': return 'build_outlined';
+      case 'Jardinagem': return 'yard_outlined';
+      case 'Delivery': return 'delivery_dining_outlined';
+      case 'Transporte': return 'local_shipping_outlined';
+      default: return 'miscellaneous_services_outlined';
+    }
+  }
+
   Future<void> updateService(String serviceId, Map<String, dynamic> serviceData, List<File> newImages) async {
     try {
       isLoading.value = true;

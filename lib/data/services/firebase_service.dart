@@ -25,7 +25,12 @@ class FirebaseService extends GetxService {
         cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
       );
 
-      await initializeMessaging();
+      try {
+        await initializeMessaging();
+      } catch (e) {
+        // Handle FCM initialization errors gracefully
+        debugPrint('⚠️ FCM initialization error: $e');
+      }
 
       debugPrint('🔥 Firebase Services Initialized');
       return this;
@@ -36,41 +41,64 @@ class FirebaseService extends GetxService {
   }
 
   Future<void> initializeMessaging() async {
-    NotificationSettings settings = await messaging.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-      provisional: false,
-    );
+    try {
+      NotificationSettings settings = await messaging.requestPermission(
+        alert: true,
+        badge: true,
+        sound: true,
+        provisional: false,
+      );
 
-    debugPrint('FCM Authorization status: ${settings.authorizationStatus}');
+      debugPrint('FCM Authorization status: ${settings.authorizationStatus}');
 
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      debugPrint('Got a message whilst in the foreground!');
-      debugPrint('Message data: ${message.data}');
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        debugPrint('Got a message whilst in the foreground!');
+        debugPrint('Message data: ${message.data}');
 
-      if (message.notification != null) {
-        debugPrint('Message also contained a notification: ${message.notification}');
+        if (message.notification != null) {
+          debugPrint('Message also contained a notification: ${message.notification}');
+        }
+      });
+
+      FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+        debugPrint('A new onMessageOpenedApp event was published!');
+      });
+
+      String? token = await messaging.getToken();
+      debugPrint('FCM Token: $token');
+
+      if (token != null) {
+        // Only update FCM token if user is authenticated
+        User? currentUser = auth.currentUser;
+        if (currentUser != null) {
+          await firestore
+              .collection('users')
+              .doc(currentUser.uid)
+              .update({'fcmToken': token})
+              .then((_) => debugPrint('FCM Token saved'))
+              .catchError((error) => debugPrint('Failed to save FCM token: $error'));
+        }
       }
-    });
 
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      debugPrint('A new onMessageOpenedApp event was published!');
-    });
-
-    String? token = await messaging.getToken();
-    debugPrint('FCM Token: $token');
-
-    auth.authStateChanges().listen((User? user) {
-      if (user != null && token != null) {
-        firestore
-            .collection('users')
-            .doc(user.uid)
-            .update({'fcmToken': token})
-            .then((_) => debugPrint('FCM Token saved'))
-            .catchError((error) => debugPrint('Failed to save FCM token: $error'));
-      }
-    });
+      // Listen for auth state changes to update FCM token
+      auth.authStateChanges().listen((User? user) {
+        if (user != null) {
+          messaging.getToken().then((token) {
+            if (token != null) {
+              firestore
+                  .collection('users')
+                  .doc(user.uid)
+                  .update({'fcmToken': token})
+                  .then((_) => debugPrint('FCM Token saved on auth change'))
+                  .catchError((error) => debugPrint('Failed to save FCM token on auth change: $error'));
+            }
+          });
+        }
+      });
+    } catch (e) {
+      debugPrint('Error in FCM initialization: $e');
+      rethrow;
+    }
   }
 
   Future<String> uploadImage(String path, Uint8List fileBytes) async {

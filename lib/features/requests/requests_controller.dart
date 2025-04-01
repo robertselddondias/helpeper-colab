@@ -104,7 +104,7 @@ class RequestsController extends GetxController {
       if (docSnapshot.exists) {
         currentRequest.value = RequestModel.fromFirestore(docSnapshot);
       } else {
-        error.value = 'Solicitação não encontrada';
+        error.value = 'Request not found';
       }
 
       isLoadingDetail.value = false;
@@ -119,6 +119,12 @@ class RequestsController extends GetxController {
     try {
       isLoading.value = true;
       error.value = '';
+
+      if (_authController.firebaseUser.value == null) {
+        error.value = 'User not authenticated';
+        isLoading.value = false;
+        return;
+      }
 
       final userId = _authController.firebaseUser.value!.uid;
       final userName = _authController.userModel.value!.name;
@@ -144,8 +150,8 @@ class RequestsController extends GetxController {
       // Send notification to the provider
       await _sendRequestNotification(
         requestMap['providerId'],
-        'Nova solicitação de serviço',
-        '$userName solicitou seu serviço de ${requestMap['serviceName']}',
+        'New service request',
+        '$userName requested your service ${requestMap['serviceName']}',
         {
           'type': 'request',
           'requestId': docRef.id,
@@ -161,8 +167,8 @@ class RequestsController extends GetxController {
       );
 
       Get.snackbar(
-        'Sucesso',
-        'Solicitação enviada com sucesso',
+        'Success',
+        'Request sent successfully',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.green,
         colorText: Colors.white,
@@ -173,8 +179,8 @@ class RequestsController extends GetxController {
       debugPrint('Error creating request: $e');
 
       Get.snackbar(
-        'Erro',
-        'Não foi possível enviar a solicitação',
+        'Error',
+        'Could not send the request',
         snackPosition: SnackPosition.BOTTOM,
       );
     }
@@ -221,8 +227,8 @@ class RequestsController extends GetxController {
         // Send notification to client
         await _sendRequestNotification(
           currentReq.clientId,
-          'Serviço concluído',
-          'O serviço de ${currentReq.serviceName} foi marcado como concluído',
+          'Service completed',
+          'The service ${currentReq.serviceName} has been marked as completed',
           {
             'type': 'request',
             'requestId': requestId,
@@ -232,8 +238,8 @@ class RequestsController extends GetxController {
         // Send notification to client
         await _sendRequestNotification(
           currentReq.clientId,
-          'Solicitação aceita',
-          'Sua solicitação para ${currentReq.serviceName} foi aceita',
+          'Request accepted',
+          'Your request for ${currentReq.serviceName} has been accepted',
           {
             'type': 'request',
             'requestId': requestId,
@@ -248,7 +254,7 @@ class RequestsController extends GetxController {
       isLoading.value = false;
 
       Get.snackbar(
-        'Sucesso',
+        'Success',
         _getStatusUpdateMessage(status),
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.green,
@@ -260,8 +266,8 @@ class RequestsController extends GetxController {
       debugPrint('Error updating request status: $e');
 
       Get.snackbar(
-        'Erro',
-        'Não foi possível atualizar o status',
+        'Error',
+        'Could not update status',
         snackPosition: SnackPosition.BOTTOM,
       );
     }
@@ -270,13 +276,13 @@ class RequestsController extends GetxController {
   String _getStatusUpdateMessage(String status) {
     switch (status) {
       case 'accepted':
-        return 'Solicitação aceita com sucesso';
+        return 'Request accepted successfully';
       case 'completed':
-        return 'Serviço marcado como concluído';
+        return 'Service marked as completed';
       case 'cancelled':
-        return 'Solicitação cancelada';
+        return 'Request cancelled';
       default:
-        return 'Status atualizado com sucesso';
+        return 'Status updated successfully';
     }
   }
 
@@ -284,6 +290,12 @@ class RequestsController extends GetxController {
     try {
       isLoading.value = true;
       error.value = '';
+
+      if (reason.isEmpty) {
+        error.value = 'Cancellation reason is required';
+        isLoading.value = false;
+        return;
+      }
 
       await _firestore
           .collection('requests')
@@ -302,8 +314,8 @@ class RequestsController extends GetxController {
 
         await _sendRequestNotification(
           recipientId,
-          'Solicitação cancelada',
-          'A solicitação para ${currentReq.serviceName} foi cancelada',
+          'Request cancelled',
+          'The request for ${currentReq.serviceName} has been cancelled',
           {
             'type': 'request',
             'requestId': requestId,
@@ -318,8 +330,8 @@ class RequestsController extends GetxController {
       isLoading.value = false;
 
       Get.snackbar(
-        'Sucesso',
-        'Solicitação cancelada com sucesso',
+        'Success',
+        'Request cancelled successfully',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.green,
         colorText: Colors.white,
@@ -330,8 +342,8 @@ class RequestsController extends GetxController {
       debugPrint('Error cancelling request: $e');
 
       Get.snackbar(
-        'Erro',
-        'Não foi possível cancelar a solicitação',
+        'Error',
+        'Could not cancel the request',
         snackPosition: SnackPosition.BOTTOM,
       );
     }
@@ -355,8 +367,8 @@ class RequestsController extends GetxController {
       isLoading.value = false;
 
       Get.snackbar(
-        'Sucesso',
-        'Status de pagamento atualizado com sucesso',
+        'Success',
+        'Payment status updated successfully',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.green,
         colorText: Colors.white,
@@ -367,8 +379,8 @@ class RequestsController extends GetxController {
       debugPrint('Error updating payment status: $e');
 
       Get.snackbar(
-        'Erro',
-        'Não foi possível atualizar o status do pagamento',
+        'Error',
+        'Could not update payment status',
         snackPosition: SnackPosition.BOTTOM,
       );
     }
@@ -382,7 +394,7 @@ class RequestsController extends GetxController {
       final request = currentRequest.value;
       if (request == null) {
         isLoading.value = false;
-        error.value = 'Solicitação não encontrada';
+        error.value = 'Request not found';
         return;
       }
 
@@ -416,8 +428,8 @@ class RequestsController extends GetxController {
       // Send notification to provider
       await _sendRequestNotification(
         request.providerId,
-        'Pagamento recebido',
-        'Você recebeu um pagamento de R\$ ${request.amount.toStringAsFixed(2)} para ${request.serviceName}',
+        'Payment received',
+        'You received a payment of R\$ ${request.amount.toStringAsFixed(2)} for ${request.serviceName}',
         {
           'type': 'payment',
           'requestId': requestId,
@@ -431,8 +443,8 @@ class RequestsController extends GetxController {
       isLoading.value = false;
 
       Get.snackbar(
-        'Sucesso',
-        'Pagamento realizado com sucesso',
+        'Success',
+        'Payment processed successfully',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.green,
         colorText: Colors.white,
@@ -443,8 +455,8 @@ class RequestsController extends GetxController {
       debugPrint('Error creating transaction: $e');
 
       Get.snackbar(
-        'Erro',
-        'Não foi possível processar o pagamento',
+        'Error',
+        'Could not process payment',
         snackPosition: SnackPosition.BOTTOM,
       );
     }
@@ -504,26 +516,26 @@ class RequestsController extends GetxController {
       isLoading.value = true;
       error.value = '';
 
-      // Obter o nome do provedor
+      // Get provider name
       final providerId = requestData['providerId'];
       final providerDoc = await _firestore.collection('users').doc(providerId).get();
 
       if (providerDoc.exists) {
-        requestData['providerName'] = providerDoc.data()?['name'] ?? 'Prestador';
+        requestData['providerName'] = providerDoc.data()?['name'] ?? 'Provider';
       } else {
-        requestData['providerName'] = 'Prestador';
+        requestData['providerName'] = 'Provider';
       }
 
-      // Continue com a criação da requisição
+      // Continue with request creation
       await createRequest(requestData);
     } catch (e) {
       isLoading.value = false;
       error.value = e.toString();
-      debugPrint('Erro ao criar requisição com provedor: $e');
+      debugPrint('Error creating request with provider: $e');
 
       Get.snackbar(
-        'Erro',
-        'Não foi possível enviar a solicitação',
+        'Error',
+        'Could not send the request',
         snackPosition: SnackPosition.BOTTOM,
       );
     }

@@ -8,7 +8,6 @@ import 'package:helpper/routes/app_routes.dart';
 
 class AuthController extends GetxController {
   final AuthRepository _authRepository = AuthRepository();
-
   final StorageService _storageService = Get.find<StorageService>();
 
   final Rx<User?> firebaseUser = Rx<User?>(null);
@@ -35,7 +34,7 @@ class AuthController extends GetxController {
 
   void _setInitialScreen(User? user) async {
     if (user == null) {
-      // Verifica onboarding apenas quando não estiver logado
+      // Verify onboarding only when not logged in
       bool hasSeenOnboarding = await _storageService.hasSeenOnboarding();
       if (hasSeenOnboarding) {
         Get.offAllNamed(AppRoutes.LOGIN);
@@ -53,7 +52,7 @@ class AuthController extends GetxController {
       isLoading.value = true;
       userModel.value = await _authRepository.getUserFromFirestore(uid);
 
-      // Salvar dados do usuário localmente
+      // Save user data locally
       if (userModel.value != null) {
         await _storageService.saveUserData(userModel.value!);
       }
@@ -133,13 +132,17 @@ class AuthController extends GetxController {
       await _authRepository.signInWithPhone(
         phone,
             (PhoneAuthCredential credential) async {
-          // ERRO: await _auth.signInWithCredential(credential);
-          // CORREÇÃO:
-          await _authRepository.signInWithCredential(credential);
+          try {
+            // Use the repository method to sign in with credential
+            await _authRepository.signInWithCredential(credential);
+          } catch (e) {
+            isLoading.value = false;
+            error.value = e.toString();
+          }
         },
             (FirebaseAuthException e) {
           isLoading.value = false;
-          error.value = e.message ?? 'Erro na verificação de telefone';
+          error.value = e.message ?? 'Error in phone verification';
         },
             (String verId, int? resendToken) {
           verificationId.value = verId;
@@ -157,9 +160,20 @@ class AuthController extends GetxController {
   }
 
   Future<void> verifyPhoneCode(String smsCode) async {
+    if (smsCode.length != 6) {
+      error.value = 'O código deve ter 6 dígitos';
+      return;
+    }
+
     try {
       isLoading.value = true;
       error.value = '';
+
+      if (verificationId.value.isEmpty) {
+        error.value = 'ID de verificação inválido, tente novamente.';
+        isLoading.value = false;
+        return;
+      }
 
       UserCredential userCredential = await _authRepository.verifyPhoneCode(
         verificationId.value,
@@ -231,6 +245,12 @@ class AuthController extends GetxController {
     try {
       isLoading.value = true;
       error.value = '';
+
+      if (firebaseUser.value == null) {
+        error.value = 'Usuário não autenticado';
+        isLoading.value = false;
+        return;
+      }
 
       await _authRepository.updateUserProfile(firebaseUser.value!.uid, data);
 

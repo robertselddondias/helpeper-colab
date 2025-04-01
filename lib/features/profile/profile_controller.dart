@@ -28,7 +28,7 @@ class ProfileController extends GetxController {
   void onInit() {
     super.onInit();
 
-    // Carregar dados quando o usuário estiver disponível
+    // Load data when user is available
     ever(_authController.userModel, (_) {
       if (_authController.userModel.value != null) {
         loadProfileData();
@@ -40,7 +40,7 @@ class ProfileController extends GetxController {
       }
     });
 
-    // Carregar dados imediatamente se o usuário já estiver disponível
+    // Load data immediately if user is already available
     if (_authController.userModel.value != null) {
       loadProfileData();
       if (_authController.userModel.value!.isProvider) {
@@ -61,7 +61,7 @@ class ProfileController extends GetxController {
           .get();
 
       if (docSnapshot.exists) {
-        // Atualizar contadores
+        // Update counters
         final userData = docSnapshot.data()!;
 
         if (_authController.userModel.value!.isProvider) {
@@ -74,7 +74,7 @@ class ProfileController extends GetxController {
         }
       }
     } catch (e) {
-      debugPrint('Erro ao carregar dados do perfil: $e');
+      debugPrint('Error loading profile data: $e');
     }
   }
 
@@ -100,7 +100,7 @@ class ProfileController extends GetxController {
       isLoadingServices.value = false;
     } catch (e) {
       isLoadingServices.value = false;
-      debugPrint('Erro ao carregar serviços: $e');
+      debugPrint('Error loading services: $e');
     }
   }
 
@@ -108,37 +108,32 @@ class ProfileController extends GetxController {
     try {
       final userId = _authController.firebaseUser.value!.uid;
 
-      // Carregar contagem de serviços contratados
-      final hiredSnapshot = await _firestore
+      // Get count of hired services
+      final hiredQuery = await _firestore
           .collection('requests')
           .where('clientId', isEqualTo: userId)
-          .count()
           .get();
 
-      hiredServicesCount.value = hiredSnapshot.count ?? 0;
+      hiredServicesCount.value = hiredQuery.docs.length;
 
-      // Carregar contagem de serviços concluídos
-      final completedSnapshot = await _firestore
+      // Get count of completed services
+      final completedQuery = await _firestore
           .collection('requests')
           .where('clientId', isEqualTo: userId)
           .where('status', isEqualTo: 'completed')
-          .count()
           .get();
 
-      // CORREÇÃO: AggregateQuerySnapshot.count() é um método, não uma propriedade
-      completedRequestsCount.value = completedSnapshot.count ?? 0;
+      completedRequestsCount.value = completedQuery.docs.length;
 
-      // Carregar contagem de avaliações dadas
-      final reviewsSnapshot = await _firestore
+      // Get count of given reviews
+      final reviewsQuery = await _firestore
           .collection('reviews')
           .where('clientId', isEqualTo: userId)
-          .count()
           .get();
 
-      // CORREÇÃO: AggregateQuerySnapshot.count() é um método, não uma propriedade
-      givenReviewsCount.value = reviewsSnapshot.count ?? 0;
+      givenReviewsCount.value = reviewsQuery.docs.length;
     } catch (e) {
-      debugPrint('Erro ao carregar dados do cliente: $e');
+      debugPrint('Error loading client data: $e');
     }
   }
 
@@ -153,14 +148,14 @@ class ProfileController extends GetxController {
       if (image != null) {
         File imageFile = File(image.path);
 
-        // Mostrar diálogo de confirmação
+        // Show confirmation dialog
         final result = await Get.dialog<bool>(
           AlertDialog(
-            title: const Text('Atualizar foto de perfil'),
+            title: const Text('Update profile photo'),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text('Deseja usar esta imagem como sua foto de perfil?'),
+                const Text('Do you want to use this image as your profile photo?'),
                 const SizedBox(height: 16),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(100),
@@ -176,11 +171,11 @@ class ProfileController extends GetxController {
             actions: [
               TextButton(
                 onPressed: () => Get.back(result: false),
-                child: const Text('Cancelar'),
+                child: const Text('Cancel'),
               ),
               TextButton(
                 onPressed: () => Get.back(result: true),
-                child: const Text('Confirmar'),
+                child: const Text('Confirm'),
               ),
             ],
           ),
@@ -191,10 +186,10 @@ class ProfileController extends GetxController {
         }
       }
     } catch (e) {
-      debugPrint('Erro ao selecionar imagem: $e');
+      debugPrint('Error selecting image: $e');
       Get.snackbar(
-        'Erro',
-        'Não foi possível selecionar a imagem',
+        'Error',
+        'Could not select the image',
         snackPosition: SnackPosition.BOTTOM,
       );
     }
@@ -211,7 +206,7 @@ class ProfileController extends GetxController {
 
       final userId = _authController.firebaseUser.value!.uid;
 
-      // Carregar a imagem para o Firebase Storage
+      // Upload image to Firebase Storage
       final bytes = await imageFile.readAsBytes();
       final ref = _storage.ref().child('profile_images/$userId.jpg');
       await ref.putData(
@@ -219,42 +214,38 @@ class ProfileController extends GetxController {
         SettableMetadata(contentType: 'image/jpeg'),
       );
 
-      // Obter a URL da imagem
+      // Get the image URL
       final downloadURL = await ref.getDownloadURL();
 
-      // Atualizar o perfil do usuário
+      // Update user profile
       await _authRepository.updateUserProfile(
         userId,
         {'photoUrl': downloadURL},
       );
 
-      // CORREÇÃO: A verificação de reloadUserData usando null não é correta porque
-      // estamos verificando se existe um método, não se ele é nulo
-      // Vamos reescrever esta parte:
-
-      // Obter os dados atualizados do usuário do Firestore
+      // Get updated user data from Firestore
       final updatedUser = await _authRepository.getUserFromFirestore(userId);
       if (updatedUser != null) {
-        // Atualizar o modelo de usuário no controlador
+        // Update user model in controller
         _authController.userModel.value = updatedUser;
       }
 
-      Get.back(); // Fechar o diálogo de carregamento
+      Get.back(); // Close loading dialog
 
       Get.snackbar(
-        'Sucesso',
-        'Foto de perfil atualizada',
+        'Success',
+        'Profile photo updated',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.green,
         colorText: Colors.white,
       );
     } catch (e) {
-      Get.back(); // Fechar o diálogo de carregamento
+      Get.back(); // Close loading dialog
 
-      debugPrint('Erro ao fazer upload da imagem: $e');
+      debugPrint('Error uploading image: $e');
       Get.snackbar(
-        'Erro',
-        'Não foi possível atualizar a foto de perfil',
+        'Error',
+        'Could not update profile photo',
         snackPosition: SnackPosition.BOTTOM,
       );
     }
@@ -267,24 +258,25 @@ class ProfileController extends GetxController {
           .doc(serviceId)
           .update({'isActive': !isActive});
 
-      // Atualizar o serviço na lista local
+      // Update service in local list
       final index = services.indexWhere((s) => s.id == serviceId);
       if (index != -1) {
-        services[index] = services[index].copyWith(isActive: !isActive);
+        final updatedService = services[index].copyWith(isActive: !isActive);
+        services[index] = updatedService;
       }
 
       Get.snackbar(
-        'Sucesso',
-        isActive ? 'Serviço desativado' : 'Serviço ativado',
+        'Success',
+        isActive ? 'Service deactivated' : 'Service activated',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.green,
         colorText: Colors.white,
       );
     } catch (e) {
-      debugPrint('Erro ao alterar status do serviço: $e');
+      debugPrint('Error changing service status: $e');
       Get.snackbar(
-        'Erro',
-        'Não foi possível alterar o status do serviço',
+        'Error',
+        'Could not change service status',
         snackPosition: SnackPosition.BOTTOM,
       );
     }
@@ -292,66 +284,66 @@ class ProfileController extends GetxController {
 
   Future<void> deleteService(String serviceId) async {
     try {
-      // Mostrar diálogo de confirmação
+      // Show confirmation dialog
       final result = await Get.dialog<bool>(
         AlertDialog(
-          title: const Text('Excluir serviço'),
+          title: const Text('Delete service'),
           content: const Text(
-            'Tem certeza que deseja excluir este serviço? Esta ação não pode ser desfeita.',
+            'Are you sure you want to delete this service? This action cannot be undone.',
           ),
           actions: [
             TextButton(
               onPressed: () => Get.back(result: false),
-              child: const Text('Cancelar'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () => Get.back(result: true),
               style: TextButton.styleFrom(
                 foregroundColor: Colors.red,
               ),
-              child: const Text('Excluir'),
+              child: const Text('Delete'),
             ),
           ],
         ),
       );
 
       if (result == true) {
-        // Obter o serviço para remover as imagens
+        // Get service to remove images
         final service = services.firstWhere((s) => s.id == serviceId);
 
-        // Excluir as imagens do Storage
+        // Delete images from Storage
         for (var imageUrl in service.images) {
           try {
             final ref = _storage.refFromURL(imageUrl);
             await ref.delete();
           } catch (e) {
-            debugPrint('Erro ao excluir imagem: $e');
+            debugPrint('Error deleting image: $e');
           }
         }
 
-        // Excluir o documento do Firestore
+        // Delete document from Firestore
         await _firestore
             .collection('services')
             .doc(serviceId)
             .delete();
 
-        // Remover o serviço da lista local
+        // Remove service from local list
         services.removeWhere((s) => s.id == serviceId);
         servicesCount.value = services.length;
 
         Get.snackbar(
-          'Sucesso',
-          'Serviço excluído com sucesso',
+          'Success',
+          'Service deleted successfully',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.green,
           colorText: Colors.white,
         );
       }
     } catch (e) {
-      debugPrint('Erro ao excluir serviço: $e');
+      debugPrint('Error deleting service: $e');
       Get.snackbar(
-        'Erro',
-        'Não foi possível excluir o serviço',
+        'Error',
+        'Could not delete the service',
         snackPosition: SnackPosition.BOTTOM,
       );
     }
@@ -368,38 +360,35 @@ class ProfileController extends GetxController {
 
       final userId = _authController.firebaseUser.value!.uid;
 
-      // Atualizar o perfil do usuário
+      // Update user profile
       await _authRepository.updateUserProfile(
         userId,
         data,
       );
 
-      // CORREÇÃO: Mesmo problema da verificação reloadUserData
-      // Vamos simplificar e usar diretamente o método do repositório
-
-      // Obter os dados atualizados do usuário do Firestore
+      // Get updated user data from Firestore
       final updatedUser = await _authRepository.getUserFromFirestore(userId);
       if (updatedUser != null) {
-        // Atualizar o modelo de usuário no controlador
+        // Update user model in controller
         _authController.userModel.value = updatedUser;
       }
 
-      Get.back(); // Fechar o diálogo de carregamento
+      Get.back(); // Close loading dialog
 
       Get.snackbar(
-        'Sucesso',
-        'Perfil atualizado com sucesso',
+        'Success',
+        'Profile updated successfully',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.green,
         colorText: Colors.white,
       );
     } catch (e) {
-      Get.back(); // Fechar o diálogo de carregamento
+      Get.back(); // Close loading dialog
 
-      debugPrint('Erro ao atualizar perfil: $e');
+      debugPrint('Error updating profile: $e');
       Get.snackbar(
-        'Erro',
-        'Não foi possível atualizar o perfil',
+        'Error',
+        'Could not update profile',
         snackPosition: SnackPosition.BOTTOM,
       );
     }

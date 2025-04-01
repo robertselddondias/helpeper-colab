@@ -129,4 +129,129 @@ class PaymentsController extends GetxController {
       averageAmount.value = 0;
     }
   }
+
+  // Add method to fetch pending payments from requests
+  Future<void> loadPendingPayments() async {
+    try {
+      final userId = _authController.firebaseUser.value?.uid;
+
+      if (userId == null) {
+        return;
+      }
+
+      final querySnapshot = await _firestore
+          .collection('requests')
+          .where('providerId', isEqualTo: userId)
+          .where('status', isEqualTo: 'completed')
+          .where('paymentStatus', isEqualTo: 'pending')
+          .get();
+
+      double pendingTotal = 0;
+
+      for (var doc in querySnapshot.docs) {
+        final amount = doc.data()['amount'] ?? 0.0;
+        pendingTotal += (amount is double) ? amount : (amount as num).toDouble();
+      }
+
+      pendingPayments.value = pendingTotal;
+    } catch (e) {
+      debugPrint('Error loading pending payments: $e');
+    }
+  }
+
+  // Method to get transaction by ID
+  Future<TransactionModel?> getTransactionById(String transactionId) async {
+    try {
+      final docSnapshot = await _firestore
+          .collection('transactions')
+          .doc(transactionId)
+          .get();
+
+      if (docSnapshot.exists) {
+        return TransactionModel.fromMap({
+          'id': docSnapshot.id,
+          ...docSnapshot.data()!,
+        });
+      }
+
+      return null;
+    } catch (e) {
+      debugPrint('Error getting transaction: $e');
+      return null;
+    }
+  }
+
+  // Method to update transaction status
+  Future<void> updateTransactionStatus(String transactionId, String status) async {
+    try {
+      await _firestore
+          .collection('transactions')
+          .doc(transactionId)
+          .update({
+        'status': status,
+        'completedAt': status == 'completed' ? FieldValue.serverTimestamp() : null,
+      });
+
+      // Update local transaction if it exists in the list
+      final index = transactions.indexWhere((t) => t.id == transactionId);
+      if (index != -1) {
+        // We need to reload the transaction to get the updated timestamp
+        final updated = await getTransactionById(transactionId);
+        if (updated != null) {
+          transactions[index] = updated;
+        }
+      }
+
+      Get.snackbar(
+        'Success',
+        'Transaction status updated',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    } catch (e) {
+      debugPrint('Error updating transaction status: $e');
+      Get.snackbar(
+        'Error',
+        'Could not update transaction status',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
+
+  // Method to get earning summary
+  Future<Map<String, dynamic>> getEarningsSummary() async {
+    try {
+      final userId = _authController.firebaseUser.value?.uid;
+
+      if (userId == null) {
+        return {
+          'totalEarnings': 0.0,
+          'completedServices': 0,
+          'pendingPayments': 0.0,
+        };
+      }
+
+      await loadTransactions(userId);
+      await loadPendingPayments();
+      calculateStatistics();
+
+      return {
+        'totalEarnings': totalEarnings.value,
+        'currentMonthEarnings': currentMonthEarnings.value,
+        'lastMonthEarnings': lastMonthEarnings.value,
+        'completedServices': completedServices.value,
+        'canceledServices': canceledServices.value,
+        'pendingPayments': pendingPayments.value,
+        'averageAmount': averageAmount.value,
+      };
+    } catch (e) {
+      debugPrint('Error getting earnings summary: $e');
+      return {
+        'totalEarnings': 0.0,
+        'completedServices': 0,
+        'pendingPayments': 0.0,
+      };
+    }
+  }
 }

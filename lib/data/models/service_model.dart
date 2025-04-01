@@ -1,4 +1,3 @@
-// Em lib/data/models/service_model.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ServiceModel {
@@ -18,7 +17,7 @@ class ServiceModel {
   final int ratingCount;
   final DateTime createdAt;
   final DateTime? updatedAt;
-  final String? providerName; // Adicionar este campo
+  final String? providerName;
 
   ServiceModel({
     required this.id,
@@ -37,60 +36,90 @@ class ServiceModel {
     required this.ratingCount,
     required this.createdAt,
     this.updatedAt,
-    this.providerName, // Adicionar no construtor
+    this.providerName,
   });
 
-  // Atualizar os métodos fromMap e toMap também
   Map<String, dynamic> toMap() {
     return {
+      'id': id,
       'providerId': providerId,
       'providerName': providerName,
+      'title': title,
+      'description': description,
+      'category': category,
+      'subCategories': subCategories,
+      'price': price,
+      'priceType': priceType,
+      'images': images,
+      'isActive': isActive,
+      'location': location,
+      'address': address,
+      'rating': rating,
+      'ratingCount': ratingCount,
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
     };
   }
 
   factory ServiceModel.fromMap(Map<String, dynamic> map) {
     return ServiceModel(
-      id: map['id'],
-      providerId: map['providerId'],
+      id: map['id'] ?? '',
+      providerId: map['providerId'] ?? '',
       providerName: map['providerName'],
       title: map['title'] ?? '',
       description: map['description'] ?? '',
-      subCategories: [],
-      category: '',
-      price: map['price'] ?? 0.0,
+      category: map['category'] ?? '',
+      subCategories: List<String>.from(map['subCategories'] ?? []),
+      price: (map['price'] ?? 0.0).toDouble(),
       priceType: map['priceType'] ?? '',
       images: List<String>.from(map['images'] ?? []),
       isActive: map['isActive'] ?? true,
-      rating: map['rating'] ?? 0.0,
+      location: map['location'],
+      address: map['address'],
+      rating: (map['rating'] ?? 0.0).toDouble(),
       ratingCount: map['ratingCount'] ?? 0,
       createdAt: (map['createdAt'] as Timestamp).toDate(),
       updatedAt: map['updatedAt'] != null ? (map['updatedAt'] as Timestamp).toDate() : null,
     );
   }
 
-  // Incluir o novo campo também no método copyWith
   ServiceModel copyWith({
-    // Campos existentes...
-    String? providerName, required bool isActive,
+    String? id,
+    String? providerId,
+    String? providerName,
+    String? title,
+    String? description,
+    String? category,
+    List<String>? subCategories,
+    double? price,
+    String? priceType,
+    List<String>? images,
+    bool? isActive,
+    GeoPoint? location,
+    String? address,
+    double? rating,
+    int? ratingCount,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return ServiceModel(
-      id: id,
-      providerId: providerId,
-      title: title,
-      description: description,
-      category: category,
-      subCategories: subCategories,
-      price: price,
-      priceType: priceType,
-      images: images,
-      isActive: isActive,
-      location: location,
-      address: address,
-      rating: rating,
-      ratingCount: ratingCount,
-      createdAt: createdAt,
-      updatedAt: updatedAt,
+      id: id ?? this.id,
+      providerId: providerId ?? this.providerId,
       providerName: providerName ?? this.providerName,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      category: category ?? this.category,
+      subCategories: subCategories ?? this.subCategories,
+      price: price ?? this.price,
+      priceType: priceType ?? this.priceType,
+      images: images ?? this.images,
+      isActive: isActive ?? this.isActive,
+      location: location ?? this.location,
+      address: address ?? this.address,
+      rating: rating ?? this.rating,
+      ratingCount: ratingCount ?? this.ratingCount,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 

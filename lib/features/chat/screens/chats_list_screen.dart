@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:helpper/core/constants/color_constants.dart';
-import 'package:helpper/features/chat/chat_controller.dart';
 import 'package:helpper/data/models/chat_model.dart';
+import 'package:helpper/features/chat/chat_controller.dart';
 import 'package:helpper/routes/app_routes.dart';
 import 'package:intl/intl.dart';
 

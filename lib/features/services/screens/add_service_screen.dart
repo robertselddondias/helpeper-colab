@@ -1,13 +1,14 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:helpper/core/constants/color_constants.dart';
 import 'package:helpper/core/utils/validators.dart';
 import 'package:helpper/core/widgets/custom_button.dart';
 import 'package:helpper/core/widgets/custom_text_field.dart';
 import 'package:helpper/features/services/services_controller.dart';
+import 'package:image_picker/image_picker.dart';
 
 class AddServiceScreen extends StatefulWidget {
   const AddServiceScreen({Key? key}) : super(key: key);

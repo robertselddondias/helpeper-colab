@@ -1,9 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:helpper/core/services/storage_service.dart';
 import 'package:helpper/core/theme/app_theme.dart';
+import 'package:helpper/data/services/firebase_service.dart';
 import 'package:helpper/features/auth/auth_controller.dart';
 import 'package:helpper/features/chat/chat_controller.dart';
 import 'package:helpper/features/notifications/notifications_controller.dart';
@@ -14,7 +15,6 @@ import 'package:helpper/features/reviews/reviews_controller.dart';
 import 'package:helpper/features/services/services_controller.dart';
 import 'package:helpper/routes/app_pages.dart';
 import 'package:helpper/routes/app_routes.dart';
-import 'package:helpper/data/services/firebase_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

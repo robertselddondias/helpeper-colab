@@ -4,10 +4,8 @@ import 'package:helpper/core/constants/color_constants.dart';
 import 'package:helpper/core/utils/responsive_utils.dart';
 import 'package:helpper/core/utils/validators.dart';
 import 'package:helpper/core/widgets/animated_button.dart';
-import 'package:helpper/core/widgets/enhanced_text_field.dart';
 import 'package:helpper/core/widgets/animated_list_item.dart';
-import 'package:helpper/core/widgets/app_bar_with_badge.dart';
-import 'package:helpper/core/widgets/modern_card.dart';
+import 'package:helpper/core/widgets/enhanced_text_field.dart';
 import 'package:helpper/features/auth/auth_controller.dart';
 
 class RegisterScreen extends StatefulWidget {

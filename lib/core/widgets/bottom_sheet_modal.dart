@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:helpper/core/constants/color_constants.dart';
 import 'package:helpper/core/utils/responsive_utils.dart';
 
 class BottomSheetModal extends StatelessWidget {

@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:helpper/core/constants/color_constants.dart';
+import 'package:helpper/core/utils/responsive_utils.dart';
 import 'package:helpper/core/utils/validators.dart';
 import 'package:helpper/core/widgets/custom_button.dart';
 import 'package:helpper/core/widgets/custom_text_field.dart';
@@ -91,186 +92,237 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       appBar: AppBar(
         title: const Text('Editar Perfil'),
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Center(
-                    child: Stack(
-                      children: [
-                        Obx(() {
-                          final user = _authController.userModel.value;
-                          return CircleAvatar(
-                            radius: 50,
-                            backgroundColor: ColorConstants.primaryColor.withOpacity(0.1),
-                            child: user?.photoUrl != null
-                                ? ClipRRect(
-                              borderRadius: BorderRadius.circular(50),
-                              child: CachedNetworkImage(
-                                imageUrl: user!.photoUrl!,
-                                fit: BoxFit.cover,
-                                width: 100,
-                                height: 100,
-                                placeholder: (context, url) =>
-                                const CircularProgressIndicator(),
-                                errorWidget: (context, url, error) =>
-                                const Icon(Icons.person, size: 50),
-                              ),
-                            )
-                                : Text(
-                              user?.name.substring(0, 1).toUpperCase() ?? 'U',
-                              style: const TextStyle(
-                                fontSize: 40,
-                                fontWeight: FontWeight.bold,
-                                color: ColorConstants.primaryColor,
-                              ),
-                            ),
-                          );
-                        }),
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: Container(
-                            width: 32,
-                            height: 32,
-                            decoration: BoxDecoration(
-                              color: ColorConstants.primaryColor,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: Colors.white,
-                                width: 2,
-                              ),
-                            ),
-                            child: IconButton(
-                              padding: EdgeInsets.zero,
-                              icon: const Icon(
-                                Icons.camera_alt_outlined,
-                                color: Colors.white,
-                                size: 18,
-                              ),
-                              onPressed: () => _profileController.pickProfileImage(),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-                  CustomTextField(
-                    label: 'Nome completo',
-                    hint: 'Digite seu nome completo',
-                    controller: _nameController,
-                    prefixIcon: Icons.person_outline,
-                    textInputAction: TextInputAction.next,
-                    validator: Validators.validateName,
-                  ),
-                  const SizedBox(height: 16),
-                  CustomTextField(
-                    label: 'Email',
-                    hint: 'Digite seu email',
-                    controller: _emailController,
-                    prefixIcon: Icons.email_outlined,
-                    enabled: false,
-                  ),
-                  const SizedBox(height: 16),
-                  CustomTextField(
-                    label: 'Telefone',
-                    hint: 'Digite seu telefone com DDD',
-                    controller: _phoneController,
-                    prefixIcon: Icons.phone_outlined,
-                    keyboardType: TextInputType.phone,
-                    textInputAction: TextInputAction.next,
-                    validator: Validators.validatePhone,
-                  ),
-                  const SizedBox(height: 16),
-                  CustomTextField(
-                    label: 'Biografia',
-                    hint: 'Fale um pouco sobre você e suas experiências',
-                    controller: _bioController,
-                    prefixIcon: Icons.description_outlined,
-                    maxLines: 3,
-                    textInputAction: TextInputAction.next,
-                    validator: Validators.validateOptional,
-                  ),
-                  const SizedBox(height: 16),
-                  CustomTextField(
-                    label: 'Endereço',
-                    hint: 'Digite seu endereço',
-                    controller: _addressController,
-                    prefixIcon: Icons.location_on_outlined,
-                    textInputAction: TextInputAction.next,
-                    validator: Validators.validateOptional,
-                  ),
-                  const SizedBox(height: 16),
-                  Obx(() {
-                    final user = _authController.userModel.value;
-                    if (user != null && user.isProvider) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Habilidades',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: ColorConstants.textPrimaryColor,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: CustomTextField(
-                                  hint: 'Adicionar uma habilidade',
-                                  controller: _skillController,
-                                  prefixIcon: Icons.add_circle_outline,
-                                  textInputAction: TextInputAction.done,
-                                  onSubmitted: (_) => _addSkill(),
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              CustomButton(
-                                label: 'Adicionar',
-                                onPressed: _addSkill,
-                                type: ButtonType.secondary,
-                                size: ButtonSize.small,
-                                isFullWidth: false,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          Obx(() => Wrap(
-                            spacing: 8,
-                            runSpacing: 8,
-                            children: _skills.map((skill) => _buildSkillChip(skill)).toList(),
-                          )),
-                        ],
-                      );
-                    }
-                    return const SizedBox.shrink();
-                  }),
-                  const SizedBox(height: 32),
-                  CustomButton(
-                    label: 'Salvar alterações',
-                    onPressed: _handleSave,
-                  ),
-                ],
-              ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return Center(
+            child: Container(
+              width: constraints.maxWidth > 600
+                  ? 600
+                  : constraints.maxWidth,
+              child: _buildProfileForm(context),
             ),
-          ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildProfileForm(BuildContext context) {
+    return Form(
+      key: _formKey,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        child: ListView(
+          shrinkWrap: true,
+          physics: const ClampingScrollPhysics(),
+          children: [
+            Center(
+              child: _buildProfileAvatar(context),
+            ),
+            SizedBox(height: ResponsiveUtils.adaptiveSize(context, 32)),
+            _buildTextField(
+              context,
+              label: 'Nome completo',
+              hint: 'Digite seu nome completo',
+              controller: _nameController,
+              prefixIcon: Icons.person_outline,
+              validator: Validators.validateName,
+            ),
+            SizedBox(height: ResponsiveUtils.adaptiveSize(context, 16)),
+            _buildTextField(
+              context,
+              label: 'Email',
+              hint: 'Digite seu email',
+              controller: _emailController,
+              prefixIcon: Icons.email_outlined,
+              enabled: false,
+            ),
+            SizedBox(height: ResponsiveUtils.adaptiveSize(context, 16)),
+            _buildTextField(
+              context,
+              label: 'Telefone',
+              hint: 'Digite seu telefone com DDD',
+              controller: _phoneController,
+              prefixIcon: Icons.phone_outlined,
+              keyboardType: TextInputType.phone,
+              validator: Validators.validatePhone,
+            ),
+            SizedBox(height: ResponsiveUtils.adaptiveSize(context, 16)),
+            _buildTextField(
+              context,
+              label: 'Biografia',
+              hint: 'Fale um pouco sobre você e suas experiências',
+              controller: _bioController,
+              prefixIcon: Icons.description_outlined,
+              maxLines: 3,
+              validator: Validators.validateOptional,
+            ),
+            SizedBox(height: ResponsiveUtils.adaptiveSize(context, 16)),
+            _buildTextField(
+              context,
+              label: 'Endereço',
+              hint: 'Digite seu endereço',
+              controller: _addressController,
+              prefixIcon: Icons.location_on_outlined,
+              validator: Validators.validateOptional,
+            ),
+            SizedBox(height: ResponsiveUtils.adaptiveSize(context, 16)),
+            _buildSkillsSection(context),
+            SizedBox(height: ResponsiveUtils.adaptiveSize(context, 32)),
+            CustomButton(
+              label: 'Salvar alterações',
+              onPressed: _handleSave,
+            ),
+            SizedBox(height: ResponsiveUtils.adaptiveSize(context, 16)), // Extra bottom padding
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildSkillChip(String skill) {
+  Widget _buildProfileAvatar(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Obx(() {
+          final user = _authController.userModel.value;
+          final avatarRadius = ResponsiveUtils.adaptiveSize(context, 50);
+          return CircleAvatar(
+            radius: avatarRadius,
+            backgroundColor: ColorConstants.primaryColor.withOpacity(0.1),
+            child: user?.photoUrl != null
+                ? ClipRRect(
+              borderRadius: BorderRadius.circular(avatarRadius),
+              child: CachedNetworkImage(
+                imageUrl: user!.photoUrl!,
+                fit: BoxFit.cover,
+                width: avatarRadius * 2,
+                height: avatarRadius * 2,
+                placeholder: (context, url) =>
+                const CircularProgressIndicator(),
+                errorWidget: (context, url, error) =>
+                const Icon(Icons.person, size: 50),
+              ),
+            )
+                : Text(
+              user?.name.substring(0, 1).toUpperCase() ?? 'U',
+              style: TextStyle(
+                fontSize: ResponsiveUtils.adaptiveFontSize(context, 40),
+                fontWeight: FontWeight.bold,
+                color: ColorConstants.primaryColor,
+              ),
+            ),
+          );
+        }),
+        Positioned(
+          bottom: 0,
+          right: 0,
+          child: Container(
+            width: ResponsiveUtils.adaptiveSize(context, 32),
+            height: ResponsiveUtils.adaptiveSize(context, 32),
+            decoration: BoxDecoration(
+              color: ColorConstants.primaryColor,
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Colors.white,
+                width: 2,
+              ),
+            ),
+            child: IconButton(
+              padding: EdgeInsets.zero,
+              icon: Icon(
+                Icons.camera_alt_outlined,
+                color: Colors.white,
+                size: ResponsiveUtils.adaptiveSize(context, 18),
+              ),
+              onPressed: () => _profileController.pickProfileImage(),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTextField(
+      BuildContext context, {
+        required String label,
+        required String hint,
+        required TextEditingController controller,
+        IconData? prefixIcon,
+        TextInputType? keyboardType,
+        int? maxLines,
+        String? Function(String?)? validator,
+        bool enabled = true,
+      }) {
+    return CustomTextField(
+      label: label,
+      hint: hint,
+      controller: controller,
+      prefixIcon: prefixIcon,
+      keyboardType: keyboardType ?? TextInputType.text,
+      maxLines: maxLines ?? 1,
+      textInputAction: TextInputAction.next,
+      validator: validator,
+      enabled: enabled,
+    );
+  }
+
+  Widget _buildSkillsSection(BuildContext context) {
+    return Obx(() {
+      final user = _authController.userModel.value;
+      if (user != null && user.isProvider) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Habilidades',
+              style: TextStyle(
+                fontSize: ResponsiveUtils.adaptiveFontSize(context, 14),
+                fontWeight: FontWeight.w500,
+                color: ColorConstants.textPrimaryColor,
+              ),
+            ),
+            SizedBox(height: ResponsiveUtils.adaptiveSize(context, 8)),
+            Row(
+              children: [
+                Expanded(
+                  child: CustomTextField(
+                    hint: 'Adicionar uma habilidade',
+                    controller: _skillController,
+                    prefixIcon: Icons.add_circle_outline,
+                    textInputAction: TextInputAction.done,
+                    onSubmitted: (_) => _addSkill(),
+                  ),
+                ),
+                SizedBox(width: ResponsiveUtils.adaptiveSize(context, 8)),
+                CustomButton(
+                  label: 'Adicionar',
+                  onPressed: _addSkill,
+                  type: ButtonType.secondary,
+                  size: ButtonSize.small,
+                  isFullWidth: false,
+                ),
+              ],
+            ),
+            SizedBox(height: ResponsiveUtils.adaptiveSize(context, 16)),
+            Wrap(
+              spacing: ResponsiveUtils.adaptiveSize(context, 8),
+              runSpacing: ResponsiveUtils.adaptiveSize(context, 8),
+              children: _skills.map((skill) => _buildSkillChip(context, skill)).toList(),
+            ),
+          ],
+        );
+      }
+      return const SizedBox.shrink();
+    });
+  }
+
+  Widget _buildSkillChip(BuildContext context, String skill) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: EdgeInsets.symmetric(
+        horizontal: ResponsiveUtils.adaptiveSize(context, 12),
+        vertical: ResponsiveUtils.adaptiveSize(context, 8),
+      ),
       decoration: BoxDecoration(
         color: ColorConstants.primaryColor.withOpacity(0.1),
         borderRadius: BorderRadius.circular(16),
@@ -289,12 +341,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(width: 4),
+          SizedBox(width: ResponsiveUtils.adaptiveSize(context, 4)),
           GestureDetector(
             onTap: () => _removeSkill(skill),
-            child: const Icon(
+            child: Icon(
               Icons.close,
-              size: 16,
+              size: ResponsiveUtils.adaptiveSize(context, 16),
               color: ColorConstants.primaryColor,
             ),
           ),

@@ -22,7 +22,6 @@ import 'package:helpper/features/reviews/screen/reviews_screen.dart';
 import 'package:helpper/features/search_screen.dart';
 import 'package:helpper/features/services/screens/add_service_screen.dart';
 import 'package:helpper/features/services/screens/service_detail_screen.dart';
-import 'package:helpper/features/services/screens/services_list_screen.dart';
 import 'package:helpper/features/settings_screen.dart';
 import 'package:helpper/features/splash_screen.dart';
 import 'package:helpper/routes/app_routes.dart';

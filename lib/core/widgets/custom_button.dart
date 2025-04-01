@@ -109,6 +109,7 @@ class CustomButton extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(borderRadius ?? 16),
             ),
+            // Remove constraints that cause infinite width issues
             padding: EdgeInsets.symmetric(
               horizontal: size == ButtonSize.small ? 16 : 24,
             ),

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:helpper/core/constants/color_constants.dart';
-import 'package:helpper/core/utils/responsive_utils.dart';
 
-class Badge extends StatelessWidget {
+class BadgeCustom extends StatelessWidget {
   final String label;
   final Color? backgroundColor;
   final Color? textColor;
@@ -12,8 +11,10 @@ class Badge extends StatelessWidget {
   final double borderRadius;
   final IconData? icon;
   final VoidCallback? onTap;
+  final FontWeight fontWeight;
+  final double padding;
 
-  const Badge({
+  const BadgeCustom({
     Key? key,
     required this.label,
     this.backgroundColor,
@@ -24,6 +25,8 @@ class Badge extends StatelessWidget {
     this.borderRadius = 12,
     this.icon,
     this.onTap,
+    this.fontWeight = FontWeight.w500,
+    this.padding = 0,
   }) : super(key: key);
 
   @override
@@ -32,14 +35,12 @@ class Badge extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: EdgeInsets.symmetric(
-          vertical: ResponsiveUtils.adaptiveSize(context, verticalPadding),
-          horizontal: ResponsiveUtils.adaptiveSize(context, horizontalPadding),
+          vertical: verticalPadding,
+          horizontal: horizontalPadding,
         ),
         decoration: BoxDecoration(
           color: backgroundColor ?? ColorConstants.primaryColor.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(
-            ResponsiveUtils.adaptiveSize(context, borderRadius),
-          ),
+          borderRadius: BorderRadius.circular(borderRadius),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -47,16 +48,16 @@ class Badge extends StatelessWidget {
             if (icon != null) ...[
               Icon(
                 icon,
-                size: ResponsiveUtils.adaptiveSize(context, fontSize + 2),
+                size: fontSize + 2,
                 color: textColor ?? ColorConstants.primaryColor,
               ),
-              SizedBox(width: ResponsiveUtils.adaptiveSize(context, 4)),
+              SizedBox(width: padding > 0 ? padding : 4),
             ],
             Text(
               label,
               style: TextStyle(
-                fontSize: ResponsiveUtils.adaptiveFontSize(context, fontSize),
-                fontWeight: FontWeight.w500,
+                fontSize: fontSize,
+                fontWeight: fontWeight,
                 color: textColor ?? ColorConstants.primaryColor,
               ),
             ),
